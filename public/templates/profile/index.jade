@@ -1,0 +1,8 @@
+extends ../layouts/main
+block active-item
+    //- nav.menu['Мой профиль']['active'] = 1
+block content
+    h3
+        | #{user.firstname} #{user.lastname}
+        br
+        small #{user.role}

@@ -1,0 +1,74 @@
+/* ========================================================================
+   Component: masonry-grid.less
+ ========================================================================== */
+
+@masonry-grid-gap: 15px;
+@masonry-grid-columns: 12;
+
+.row-masonry {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  .column-fill(auto);
+  
+  > .col-masonry {
+    display: inline-block;
+    width: 100%;
+    min-height: 1em;
+    margin-bottom: @masonry-grid-gap;
+  }
+}
+
+/* Columns defintion by devices */
+
+@media @mobile     { .loop-masonry-row( sm );  }
+@media @tablet     { .loop-masonry-row( md );  }
+@media @desktop    { .loop-masonry-row( lg );  }
+@media @desktop-lg { .loop-masonry-row( xl ); }
+
+// Loop to generate each row with the right number of columns
+.loop-masonry-row(@type, @maxcols: @masonry-grid-columns) {
+  // row loop
+  .make-masonry-row(@index) when (@index <= @maxcols) {
+    .row-masonry-@{type}-@{index} {
+      .masonry-column(@index);
+    }
+    .make-masonry-row(@index + 1);
+  }
+  // kickstart
+  .make-masonry-row(1);
+}
+
+// Declares the column specification for the row
+.masonry-column(@numcols, @gap: @masonry-grid-gap) {
+  .column-count(@numcols);
+  .column-gap(@gap);
+  @col-width: floor((100% - (@gap * (@numcols - 1) )) / @numcols);
+  //.column-width(@col-width);
+}
+
+// Crossbrowser CSS Column Layout mixin
+.column-gap(@value) {
+  -moz-column-gap: @value;
+  -webkit-column-gap: @value;
+  column-gap: @value;
+}
+
+.column-count(@value) {
+  -moz-column-count: @value;
+  -webkit-column-count: @value;
+  column-count: @value;
+}
+
+.column-width(@value) {
+  -moz-column-width: @value;
+  -webkit-column-width: @value;
+  column-width: @value;
+}
+
+.column-fill(@value) {
+  -webkit-column-fill: @value;
+  -moz-column-fill: @value;
+  column-fill: @value;
+}

@@ -1,0 +1,133 @@
+extends layouts/main
+
+block active-item
+    //- nav.menu['Магазины']['active'] = 1
+
+block content
+    button(type='button').btn.btn-labeled.btn-primary.pull-right
+        span.btn-label
+            i.fa.fa-plus-circle
+        | Добавить виджет
+    h3
+        | Основной экран
+        br
+        small Добро пожаловать, #{user.firstname} #{user.lastname}
+
+    .row
+        //.col-md-9
+            // START table
+            .row
+                .col-lg-12
+                    // START panel
+                    .panel.panel-default
+                        .panel-heading
+                            | Новые организации
+                            a(href="#", data-perform="panel-dismiss", data-toggle="tooltip", title="Свернуть").pull-right
+                                em.fa.fa-times
+                            a(href="#", data-perform="panel-collapse", data-toggle="tooltip", title="Закрыть").pull-right
+                                em.fa.fa-minus
+                        // START table-responsive
+                        .table-responsive
+                            table.table.table-striped.table-bordered.table-hover
+                                thead
+                                    tr
+                                        th Название организации
+                                        th Телефон
+                                        th Директор
+                                        th Действие
+                                tbody
+                                    tr
+                                        td ГлобалТехноСтрой
+                                        td (4852)57-01-01
+                                        td Ходырев Олег Витальевич
+                                        td.text-center
+                                            .btn-group
+                                                a.dropdown-toggle(href='#', data-toggle='dropdown')
+                                                    i.fa.fa-cog
+                                                ul.dropdown-menu.pull-right.text-left
+                                                    li
+                                                        a(href='#') Просмотр
+                                                    li.divider
+                                                    li
+                                                        a(href='#') Редактировать
+                                                    li
+                                                        a(href='#') Добавить технику
+                                    tr
+                                        td ГлобалТехноСтрой
+                                        td (4852)57-01-01
+                                        td Ходырев Олег Витальевич
+                                        td.text-center
+                                            .btn-group
+                                                a.dropdown-toggle(href='#', data-toggle='dropdown')
+                                                    i.fa.fa-cog
+                                                ul.dropdown-menu.pull-right.text-left
+                                                    li
+                                                        a(href='#') Просмотр
+                                                    li.divider
+                                                    li
+                                                        a(href='#') Редактировать
+                                                    li
+                                                        a(href='#') Добавить технику
+                        // END table-responsive
+                        .panel-footer.text-right
+                            a(href="/contractor"): small Весь список
+                    // END panel
+            // END table
+            // START table
+            .row
+                .col-lg-12
+                    // START panel
+                    .panel.panel-default
+                        .panel-heading
+                            | Новые организации
+                            a(href="#", data-perform="panel-dismiss", data-toggle="tooltip", title="Свернуть").pull-right
+                                em.fa.fa-times
+                            a(href="#", data-perform="panel-collapse", data-toggle="tooltip", title="Закрыть").pull-right
+                                em.fa.fa-minus
+                        // START table-responsive
+                        .table-responsive
+                            table.table.table-striped.table-bordered.table-hover
+                                thead
+                                    tr
+                                        th Название организации
+                                        th Телефон
+                                        th Директор
+                                        th Действие
+                                tbody
+                                    tr
+                                        td ГлобалТехноСтрой
+                                        td (4852)57-01-01
+                                        td Ходырев Олег Витальевич
+                                        td.text-center
+                                            .btn-group
+                                                a.dropdown-toggle(href='#', data-toggle='dropdown')
+                                                    i.fa.fa-cog
+                                                ul.dropdown-menu.pull-right.text-left
+                                                    li
+                                                        a(href='#') Просмотр
+                                                    li.divider
+                                                    li
+                                                        a(href='#') Редактировать
+                                                    li
+                                                        a(href='#') Добавить технику
+                                    tr
+                                        td ГлобалТехноСтрой
+                                        td (4852)57-01-01
+                                        td Ходырев Олег Витальевич
+                                        td.text-center
+                                            .btn-group
+                                                a.dropdown-toggle(href='#', data-toggle='dropdown')
+                                                    i.fa.fa-cog
+                                                ul.dropdown-menu.pull-right.text-left
+                                                    li
+                                                        a(href='#') Просмотр
+                                                    li.divider
+                                                    li
+                                                        a(href='#') Редактировать
+                                                    li
+                                                        a(href='#') Добавить технику
+                        // END table-responsive
+                        .panel-footer.text-right
+                            a(href="/contractor"): small Весь список
+                    // END panel
+            // END table

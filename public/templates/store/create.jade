@@ -1,0 +1,29 @@
+extends ../layouts/main
+block active-item
+    - nav.menu['Магазины']['active'] = 1
+block content
+    h3 Новый магазин
+    .row
+        .col-md-12
+            form.form-horizontal#storeForm(role='form', method='post', action='/store/create', data-parsley-validate='', novalidate='')
+                // START panel
+                .panel.panel-default
+                    .panel-heading Основная информация
+                    .panel-body
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label Название
+                                .col-sm-6
+                                    input.form-control#storeTitle(type='text', name='title', required='required')
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label Информация о магазине
+                                .col-sm-6
+                                    textarea.form-control#storeDescription(name='description', rows='2')
+                    .panel-footer
+                        button.btn.btn-lg.btn-info(type='submit') Сохранить
+                        | &nbsp;
+                        a.btn.btn-lg.btn-default(href="/store") Отменить
+                        input(type="hidden", name="_csrf", value="#{_csrf}")
+                // END panel
+    // END row

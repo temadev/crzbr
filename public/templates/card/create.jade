@@ -1,0 +1,33 @@
+extends ../layouts/main
+block active-item
+    - nav.menu['Карты']['active'] = 1
+block content
+    h3 Выпустить карту
+    .row
+        .col-md-12
+            form.form-horizontal#storeForm(role='form', method='post', action='/card/create', data-parsley-validate='', novalidate='')
+                // START panel
+                .panel.panel-default
+                    .panel-heading Основная информация
+                    .panel-body
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label Магазин
+                                .col-sm-6
+                                    select.form-control(name='store')
+                                        each store in stores
+                                            option(value='#{store._id}')= store.title
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label(for="user") Email
+                                .col-sm-10
+                                    input.form-control#autocomplete-users(type="text", name="user")
+                                    input#selction-users(type="hidden", name="user_id")
+
+                    .panel-footer
+                        button.btn.btn-lg.btn-info(type='submit') Сохранить
+                        | &nbsp;
+                        a.btn.btn-lg.btn-default(href="/store") Отменить
+                        input(type="hidden", name="_csrf", value="#{_csrf}")
+                // END panel
+    // END row

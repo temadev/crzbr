@@ -1,0 +1,64 @@
+extends ../layouts/main
+block active-item
+    - nav.menu['Магазины']['active'] = 1
+block content
+    a(href='/store/create').btn.btn-labeled.btn-primary.pull-right
+        span.btn-label
+            i.fa.fa-plus-circle
+        | Новый магазин
+    h3 Магазины
+        br
+        small Список моих магазинов
+
+    // START DATATABLE 2
+    .row
+        .col-lg-12
+            .panel.panel-default
+                .panel-body
+                    table#datatable2.table.table-striped.table-hover
+                        thead
+                            tr
+                                th Название
+                                th Информация
+                                th Действия
+                        tbody
+                            each store in stores
+                                tr(id='#{store._id}')
+                                    td
+                                        a(href='/store/view/#{store._id}')
+                                            //if store.image
+                                                img.img-circle(src='#{store.image}', title='#{store.title}', style='width:60px')
+                                            | #{store.title}
+                                    td #{store.description}
+                                    td
+                                        a.btn.btn-primary.btn-xs(href='/store/view/#{store._id}')
+                                            i.fa.fa-search
+                                        | &nbsp;
+                                        a.btn.btn-warning.btn-xs(href='/store/edit/#{store._id}')
+                                            i.fa.fa-wrench
+                                        | &nbsp;
+                                        button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{store._id}', data-title='#{store.title}')
+                                            i.fa.fa-times
+                            tfoot
+                                tr
+                                    th
+                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Название')
+                                    th
+                                    th
+    // END DATATABLE 2
+block body_child
+    // START modal
+    #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+                    h4#modalRemoveLabel.modal-title
+                        | Вы собираетесь удалить магазин&nbsp;
+                        #title
+                .modal-body
+                    | Вы действительно хотите удалить магазин?
+                .modal-footer
+                    button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
+                    button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
+    // END modal

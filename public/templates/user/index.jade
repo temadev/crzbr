@@ -1,0 +1,69 @@
+extends ../layouts/main
+block active-item
+    - nav.menu['Клиенты']['active'] = 1
+block content
+    - function addZ(n){return n<10? '0'+n:''+n;}
+    - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()}
+    a(href='/user/create').btn.btn-labeled.btn-primary.pull-right
+        span.btn-label
+            i.fa.fa-plus-circle
+        | Добавить клиента
+    h3 Клиенты
+        br
+        small Список всех клиентов
+    // START DATATABLE 2
+    .row
+        .col-lg-12
+            .panel.panel-default
+                .panel-body
+                    table#datatable2.table.table-striped.table-hover
+                        thead
+                            tr
+                                th ФИО
+                                th Телефон
+                                th Email
+                                th Регистрация
+                        tbody
+                            each user in users
+                                tr(id='#{user._id}')
+                                    td: a(href='/user/view/#{user._id}') #{user.lastname} #{user.firstname} #{user.middlename}
+                                    td #{user.phone}
+                                    td #{user.email}
+                                    td #{showTime(user.created)}
+                                    td
+                                        a.btn.btn-primary.btn-xs(href='/user/view/#{user._id}')
+                                            i.fa.fa-search
+                                        | &nbsp;
+                                        a.btn.btn-warning.btn-xs(href='/user/edit/#{user._id}')
+                                            i.fa.fa-wrench
+                                        | &nbsp;
+                                        button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{user._id}', data-title='#{user.title}')
+                                            i.fa.fa-times
+                            tfoot
+                                tr
+                                    th
+                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='ФИО')
+                                    th
+                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Телефон')
+                                    th
+                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Email')
+                                    th
+                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Регистрация')
+                                    th
+    // END DATATABLE 2
+block body_child
+    // START modal
+    #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+                    h4#modalRemoveLabel.modal-title
+                        | Вы собираетесь удалить клиента&nbsp;
+                        #title
+                .modal-body
+                    | Вы действительно хотите удалить клиента?
+                .modal-footer
+                    button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
+                    button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
+    // END modal

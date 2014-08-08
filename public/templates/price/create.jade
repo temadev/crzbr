@@ -1,0 +1,41 @@
+extends ../layouts/main
+block active-item
+    - nav.menu['Прайслисты']['active'] = 1
+block content
+    h3 Новый клиент
+    .row
+        .col-md-12
+            form.form-horizontal#priceForm(role='form', method='post', action='/price/create', data-parsley-validate='', novalidate='')
+                // START panel
+                .panel.panel-default
+                    .panel-heading Основная информация
+                    .panel-body
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label Магазин
+                                .col-sm-6
+                                    select.form-control(name='store')
+                                        each store in stores
+                                            option(value='#{store._id}') #{store.title}
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label Название
+                                .col-sm-6
+                                    input.form-control(type='text', name='title', required='required')
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label Цена
+                                .col-sm-6
+                                    input.form-control(type='text', name='price', required='required')
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label Описание
+                                .col-sm-6
+                                    textarea.form-control(name='description')
+                    .panel-footer
+                        button.btn.btn-lg.btn-info(type='submit') Сохранить
+                        | &nbsp;
+                        a.btn.btn-lg.btn-default(href="/price") Отменить
+                        input(type="hidden", name="_csrf", value="#{_csrf}")
+                // END panel
+    // END row

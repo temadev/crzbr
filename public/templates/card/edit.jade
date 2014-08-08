@@ -1,0 +1,27 @@
+extends ../layouts/main
+block active-item
+    - nav.menu['Карты']['active'] = 1
+block content
+    h3 Карта
+    .row
+        .col-md-12
+            form.form-horizontal#cardForm(role='form', method='post', action='/card/edit', data-parsley-validate='', novalidate='')
+                // START panel
+                .panel.panel-default
+                    .panel-heading Основная информация
+                    .panel-body
+                        if (!card.user)
+                            fieldset
+                                .form-group
+                                    label.col-sm-2.control-label(for="user") Телефон
+                                    .col-sm-10
+                                        input.form-control#autocomplete-users(type="text", name="user")
+                                        input#selction-users(type="hidden", name="user_id")
+                    .panel-footer
+                        button.btn.btn-lg.btn-info(type='submit') Сохранить
+                        | &nbsp;
+                        a.btn.btn-lg.btn-default(href="/card") Отменить
+                        input(type="hidden", name="id", value="#{card.id}")
+                        input(type="hidden", name="_csrf", value="#{_csrf}")
+                // END panel
+    // END row

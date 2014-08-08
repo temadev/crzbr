@@ -1,0 +1,83 @@
+extends ../layouts/main
+block active-item
+    - nav.menu['Карты']['active'] = 1
+block content
+    a(href='/card/create').btn.btn-labeled.btn-primary.pull-right
+        span.btn-label
+            i.fa.fa-plus-circle
+        | Новая карта
+    h3 Карты
+        br
+        small Список всех карт
+    // START DATATABLE 2
+    .row
+        .col-lg-12
+            .panel.panel-default
+                .panel-body
+                    table#datatable-cards.table.table-striped.table-hover
+                        thead
+                            tr
+                                th Номер карты
+                                th Владелец
+                                th Телефон
+                                th E-mail
+                                th Магазин
+                                th Покупки
+                                th Действия
+                        tbody
+                            each card in cards
+                                tr(id='#{card._id}')
+                                    td
+                                        a(href='/card/view/#{card._id}') #{card.cc}
+                                    td
+                                        if (card.user)
+                                            |#{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
+                                    td
+                                        if (card.user)
+                                            |#{card.user.phone}
+                                    td
+                                        if (card.user)
+                                            |#{card.user.email}
+                                    td: a(href='/store/view/#{card.store._id}') #{card.store.title}
+                                    td #{card.purchases}
+                                    td
+                                        a.btn.btn-primary.btn-xs(href='/card/view/#{card._id}')
+                                            i.fa.fa-search
+                                        | &nbsp;
+                                        a.btn.btn-warning.btn-xs(href='/card/edit/#{card._id}')
+                                            i.fa.fa-wrench
+                                        | &nbsp;
+                                        button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{card._id}', data-title='#{card.cc}')
+                                            i.fa.fa-times
+                            tfoot
+                                tr
+                                    th
+                                        input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Номер карты')
+                                    th
+                                        input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Владелец')
+                                    th
+                                        input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Телефон')
+                                    th
+                                        input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='E-mail')
+                                    th
+                                        input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Магазин')
+                                    th
+                                        input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Покупки')
+                                    th
+    // END DATATABLE 2
+block body_child
+    // START modal
+    #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+                    h4#modalRemoveLabel.modal-title
+                        | Вы собираетесь удалить карту&nbsp;
+                        #title
+                .modal-body
+                    | Вы действительно хотите удалить карту?
+                .modal-footer
+                    button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
+                    button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
+    // END modal

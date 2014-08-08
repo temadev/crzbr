@@ -1,0 +1,57 @@
+extends ../layouts/main
+block active-item
+    - nav.menu['Клиенты']['active'] = 1
+block content
+    h3 #{client.lastname} #{client.firstname} #{client.middlename}
+    .row
+        .col-md-12
+            form.form-horizontal#clientForm(role='form', method='post', action='/user/edit', enctype='multipart/form-data')
+                // START panel
+                .panel.panel-default
+                    .panel-heading Основная информация
+                    .panel-body
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label Фамилия
+                                .col-sm-6
+                                    input.form-control(type='text', name='lastname', required='required', value='#{client.lastname?client.lastname:""}')
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label Имя
+                                .col-sm-6
+                                    input.form-control(type='text', name='firstname', required='required', value='#{client.firstname?client.firstname:""}')
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label Отчество
+                                .col-sm-6
+                                    input.form-control(type='text', name='middlename', value='#{client.middlename?client.middlename:""}')
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label Телефон
+                                .col-sm-6
+                                    input.form-control(type='text', name='phone', value='#{client.phone?client.phone:""}')
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label Email
+                                .col-sm-6
+                                    input.form-control(type='text', name='email', required='required', value='#{client.email}', readonly='')
+                        fieldset
+                            .form-group
+                                label.col-sm-2.control-label Статус
+                                .col-sm-6
+                                    input.form-control(type='text', name='role', required='required', value='#{client.role}', readonly='')
+                        fieldset
+                            .form-group.has-feedback
+                                label.col-sm-2.control-label Фото
+                                .col-sm-6
+                                    input.form-control#clientPhoto(type="file", name="photo")
+                                    if (client.photo)
+                                        //.thumbnail: img.img-responsive(src="#{client.photo}")
+                    .panel-footer
+                        button.btn.btn-lg.btn-info(type='submit') Сохранить
+                        | &nbsp;
+                        a.btn.btn-lg.btn-default(href="/user") Отменить
+                        input(type="hidden", name="id", value="#{client._id}")
+                        input(type="hidden", name="_csrf", value="#{_csrf}")
+                // END panel
+    // END row

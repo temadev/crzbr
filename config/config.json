@@ -1,0 +1,86 @@
+{
+
+  "express": {
+    "view cache": false,
+    "view engine": "jade",
+    "views": "path:./.build/templates"
+  },
+
+  "databaseConfig": {
+    "host": "heroku_app26803395:q1sk4jrvpi7g214d41hqt1dodf@ds053978.mongolab.com:53978",
+    "database": "heroku_app26803395"
+  },
+
+  "bcrypt": {
+    "difficulty": 8
+  },
+
+  "middleware": {
+
+    "static": {
+      "module": {
+        "arguments": [ "path:./.build" ]
+      }
+    },
+
+    "router": {
+      "module": {
+        "arguments": [
+          {
+            "directory": "path:./controllers"
+          }
+        ]
+      }
+    },
+
+    "fileNotFound": {
+      "enabled": true,
+      "priority": 130,
+      "module": {
+        "name": "kraken-js/middleware/404",
+        "arguments": [ "errors/404" ]
+      }
+    },
+
+    "serverError": {
+      "enabled": true,
+      "priority": 140,
+      "module": {
+        "name": "kraken-js/middleware/500",
+        "arguments": [ "errors/500" ]
+      }
+    },
+
+    //flash messaging middleware
+    "flash": {
+      "priority": 91,
+      "enabled": true,
+      "module": {
+        "name":"connect-flash",
+        "method": "flash"
+      }
+    },
+
+    //test if user session required to view page and if user has permission for given page
+    "isAuthenticated": {
+      "enabled": true,
+      "priority": 111,
+      "module": {
+        "name":"path:./lib/auth",
+        "method": "isAuthenticated"
+
+      }
+    },
+
+    //add the user to the response object
+    "injectUser": {
+      "enabled": true,
+      "priority": 112,
+      "module": {
+        "name":"path:./lib/auth",
+        "method": "injectUser"
+      }
+    }
+
+  }
+}
