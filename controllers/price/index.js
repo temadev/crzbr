@@ -37,7 +37,7 @@ module.exports = function (router) {
     var newPrice = new Price(req.body);
 
     newPrice.save(function (err, price) {
-      res.redirect('/price/view/' + price._id)
+      res.redirect('/price/view/' + price._id);
     });
 
   });

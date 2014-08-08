@@ -6,6 +6,13 @@
     "views": "path:./.build/templates"
   },
 
+  "view engines": {
+    "jade": {
+      "module": "jade",
+      "renderer": "__express"
+    }
+  },
+
   "databaseConfig": {
     "host": "heroku_app26803395:q1sk4jrvpi7g214d41hqt1dodf@ds053978.mongolab.com:53978",
     "database": "heroku_app26803395"

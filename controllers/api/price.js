@@ -9,8 +9,8 @@ module.exports = function (router) {
 
   router.get('/list', auth.isAuthenticated(), function (req, res) {
 
-    var regex = new RegExp(req.query["query"], 'i');
-    var query = Price.find({title: regex}, { 'title': 1, 'price': 1 }).sort({"updated": -1}).sort({"created": -1}).limit(20);
+    var regex = new RegExp(req.query.query, 'i');
+    var query = Price.find({title: regex}, { 'title': 1, 'price': 1 }).sort({'updated': -1}).sort({'created': -1}).limit(20);
     var suggestions = [];
 
     query.exec(function (err, prices) {
@@ -26,7 +26,7 @@ module.exports = function (router) {
         callback();
       }, function (err) {
         res.json({
-          query: req.query["query"],
+          query: req.query.query,
           suggestions: suggestions
         });
       });

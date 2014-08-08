@@ -18,7 +18,8 @@ module.exports = function (router) {
     console.log(req.query);
 
     var dateStart
-      , dateEnd;
+      , dateEnd
+      , query = {};
 
     if (req.query) {
       if (req.query.dateStart && req.query.dateEnd) {
@@ -35,8 +36,6 @@ module.exports = function (router) {
           query = {date: {$lt: dateEnd}};
         }
       }
-    } else {
-      var query = {};
     }
 
     Purchase.find(query)

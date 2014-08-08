@@ -13,9 +13,9 @@ var auth = require('../../lib/auth')
   , s3 = require('s3');
 
 var client = s3.createClient({
-  key: "AKIAIIPJP7GV7ZQLR7GA",
-  secret: "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",
-  bucket: "roskonkurs"
+  key: 'AKIAIIPJP7GV7ZQLR7GA',
+  secret: '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',
+  bucket: 'roskonkurs'
 });
 
 module.exports = function (router) {
@@ -61,7 +61,7 @@ module.exports = function (router) {
       if (user) {
         res.redirect('/user/view/' + user._id);
       }
-    })
+    });
 
   });
 
@@ -135,8 +135,8 @@ module.exports = function (router) {
 //    console.log(req);
     body.updated = Date.now();
 
-    if (req.files && req.files['photo']) {
-      uploadS3(req.files['photo'], req.user, function (url) {
+    if (req.files && req.files.photo) {
+      uploadS3(req.files.photo, req.user, function (url) {
         body.photo = url;
 
         User.findByIdAndUpdate(body.id, { $set: body }, function (err, user) {
@@ -151,34 +151,19 @@ module.exports = function (router) {
 
   });
 
-  router.post('/file', function (req, res) {
-
-    console.log('files');
-
-    console.log(req.files);
-    if (req.files && req.files['photo']) {
-      uploadS3(req.files['photo'], req.user, function (url) {
-        res.json({success: url});
-      });
-    } else {
-      res.json({error: 'no files'})
-    }
-
-  });
-
 };
 
 function uploadS3(file, user, callback) {
   if (file.path) {
-    var uploader = client.upload(file.path, "crzbr/" + user._id + "/" + file.name);
+    var uploader = client.upload(file.path, 'crzbr/' + user._id + '/' + file.name);
     uploader.on('error', function (err) {
-      console.error("unable to upload:", err.stack);
+      console.error('unable to upload:', err.stack);
     });
     uploader.on('progress', function (amountDone, amountTotal) {
-      console.log("progress", amountDone, amountTotal);
+      console.log('progress', amountDone, amountTotal);
     });
     uploader.on('end', function (url) {
-      console.log("file available at", url);
+      console.log('file available at', url);
       User.findByIdAndUpdate(user._id, { $set: {photo: url} }, function (err, user) {
         callback(user.photo);
       });

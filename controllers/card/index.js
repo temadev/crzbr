@@ -173,7 +173,7 @@ module.exports = function (router) {
         Card.findByIdAndUpdate(body.id, { $set: card }, function (err, card) {
           res.redirect('/card/view/' + body.id);
         });
-      })
+      });
     } else {
       res.redirect('/card/view/' + body.id);
     }
