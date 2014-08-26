@@ -54,9 +54,15 @@ block content
                                 tr(id='#{card._id}')
                                     td
                                         a(href='/card/view/#{card._id}') #{card.cc}
-                                    td #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
-                                    td #{card.user.phone}
-                                    td #{card.user.email}
+                                    td
+                                        if (card.user)
+                                            | #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
+                                    td
+                                        if (card.user)
+                                            | #{card.user.phone}
+                                    td
+                                        if (card.user)
+                                            | #{card.user.email}
                                     td
                                         a.btn.btn-primary.btn-xs(href='/card/view/#{card._id}')
                                             i.fa.fa-search

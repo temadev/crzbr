@@ -54,8 +54,16 @@ module.exports = function (router) {
           if (err) {
             throw err;
           }
-          res.redirect('/user/view/' + user._id);
+          if (req.files && req.files.photo) {
+            uploadS3(req.files.photo, user, function (url) {
+              res.redirect('/user/view/' + user._id);
+            });
+          } else {
+            res.redirect('/user/view/' + user._id);
+          }
+
         });
+
         return;
       }
       if (user) {
@@ -124,6 +132,7 @@ module.exports = function (router) {
 
     User.findOne({ _id: id })
       .exec(function (err, user) {
+        console.log(user);
         res.render('user/edit', { client: user });
       });
 

@@ -43,10 +43,10 @@ block content
                                         option(value='user', selected='') Клиент
                                         option(value='admin') Админ
                         fieldset
-                            .form-group
+                            .form-group.has-feedback
                                 label.col-sm-2.control-label Фото
                                 .col-sm-6
-                                    input.form-control(type='text', name='photo')
+                                    input.form-control#clientPhoto(type="file", name="photo")
                     .panel-footer
                         button.btn.btn-lg.btn-info(type='submit') Сохранить
                         | &nbsp;

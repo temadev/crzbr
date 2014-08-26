@@ -45,8 +45,9 @@ block content
                                 label.col-sm-2.control-label Фото
                                 .col-sm-6
                                     input.form-control#clientPhoto(type="file", name="photo")
-                                    if (client.photo)
-                                        //.thumbnail: img.img-responsive(src="#{client.photo}")
+                                if (client.photo)
+                                    .col-sm-2
+                                        .thumbnail: img.img-responsive(src="#{client.photo}")
                     .panel-footer
                         button.btn.btn-lg.btn-info(type='submit') Сохранить
                         | &nbsp;

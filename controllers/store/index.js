@@ -8,7 +8,14 @@ var auth = require('../../lib/auth')
   , Store = require('../../models/store')
   , Card = require('../../models/card')
   , User = require('../../models/user')
-  , Purchase = require('../../models/purchase');
+  , Purchase = require('../../models/purchase')
+  , s3 = require('s3');
+
+var client = s3.createClient({
+  key: 'AKIAIIPJP7GV7ZQLR7GA',
+  secret: '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',
+  bucket: 'roskonkurs'
+});
 
 module.exports = function (router) {
 
@@ -103,7 +110,15 @@ module.exports = function (router) {
     };
 
     Store.findByIdAndUpdate(body.id, { $set: store }, function (err, store) {
-      res.redirect('/store/view/' + body.id);
+      console.log(req.files);
+      if (req.files && req.files.image) {
+        uploadS3(req.files.image, store, function (url) {
+          console.log(url);
+          res.redirect('/store/view/' + store._id);
+        });
+      } else {
+        res.redirect('/store/view/' + store._id);
+      }
     });
 
   });
@@ -114,7 +129,14 @@ module.exports = function (router) {
     newStore.user = req.user;
 
     newStore.save(function (err, store) {
-      res.redirect('/store/view/' + store._id);
+      if (req.files && req.files.photo) {
+        uploadS3(req.files.photo, store, function (url) {
+          res.redirect('/store/view/' + store._id);
+        });
+      } else {
+        res.redirect('/store/view/' + store._id);
+      }
+
     });
 
   });
@@ -129,3 +151,22 @@ module.exports = function (router) {
   });
 
 };
+
+function uploadS3(file, store, callback) {
+  if (file.path) {
+    var uploader = client.upload(file.path, 'crzbr/stores/' + store._id + '/' + file.name);
+    uploader.on('error', function (err) {
+      console.error('unable to upload:', err.stack);
+    });
+    uploader.on('progress', function (amountDone, amountTotal) {
+      console.log('progress', amountDone, amountTotal);
+    });
+    uploader.on('end', function (url) {
+      console.log('file available at', url);
+      Store.findByIdAndUpdate(store._id, { $set: {image: url} }, function (err, store) {
+        callback(store.image);
+      });
+
+    });
+  }
+}

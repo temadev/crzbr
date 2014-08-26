@@ -10,7 +10,11 @@ var auth = require('../../lib/auth')
   , User = require('../../models/user')
   , Purchase = require('../../models/purchase')
   , QRCode = require('qrcode')
-  , cc = require('coupon-code');
+  , cc = require('coupon-code')
+  , PDFDocument = require('pdfkit')
+  , path = require('path')
+  , request = require('request')
+  , fs = require('fs');
 
 module.exports = function (router) {
 
@@ -51,7 +55,7 @@ module.exports = function (router) {
   router.post('/create', auth.isAuthenticated(), multipartMiddleware, function (req, res) {
 
     var newCard = new Card({
-      user: req.body.user_id?req.body.user_id:null,
+      user: req.body.user_id ? req.body.user_id : null,
       store: req.body.store,
       cc: cc.generate({ parts: 4 })
     });
@@ -116,12 +120,23 @@ module.exports = function (router) {
 
   });
 
+//  router.get('/view/:id/qr.png', function (req, res) {
+//    QRCode.save(path.join(__dirname, '../../public/tmp/' + req.params.id), 'http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, url) {
+//      if (err) {
+//        throw err;
+//      }
+//
+//      res.end(url);
+//    });
+//  });
+
   router.get('/view/:id/print', auth.isAuthenticated(), function (req, res) {
+
 
     async.parallel({
       card: function (callback) {
         Card.findOne({_id: req.params.id})
-          .populate('user store', 'title firstname lastname middlename email phone')
+          .populate('user store', 'title firstname lastname middlename email phone image')
           .exec(function (err, card) {
             if (err) {
               throw err;
@@ -130,10 +145,11 @@ module.exports = function (router) {
           });
       },
       qr: function (callback) {
-        QRCode.toDataURL('http://localhost:5000/card/view/' + req.params.id, function (err, url) {
+        QRCode.save(path.join(__dirname, '../../.build/qr/' + req.params.id + '.png'), 'http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, url) {
           if (err) {
             throw err;
           }
+          console.log(url);
           callback(null, url);
         });
       }
@@ -141,7 +157,40 @@ module.exports = function (router) {
       if (err) {
         console.log(err);
       }
-      res.render('card/print', { card: results.card, qr: results.qr });
+
+      var doc = new PDFDocument({ size: 'A4', margins: { top: 5, bottom: 5, left: 5, right: 5 } });
+
+      doc.font(path.join(__dirname, '../../public/fonts/RobotoCondensed-Regular.ttf'));
+      doc.fontSize(9).fillColor('black').text(results.card.cc);
+      doc.fontSize(14).fillColor('black').text(results.card.store.title);
+      doc.image(path.join(__dirname, '../../.build/qr/' + req.params.id + '.png'), 162, 65, {fit: [100, 100]});
+
+      doc.lineJoin('miter')
+        .rect(0, 0, 262, 163)
+        .stroke();
+
+      if (results.card.store.image) {
+        var image = results.card.store.image.split('/')
+          , len = image.length;
+
+        var r = request(results.card.store.image).pipe(fs.createWriteStream(path.join(__dirname, '../../.build/logo/' + image[len])));
+        r.on('finish', function () {
+          doc.image(path.join(__dirname, '../../.build/logo/' + image[len]), 7, 76, {fit: [80, 80]});
+
+          doc.output(function (string) {
+            res.contentType = 'application/pdf';
+            res.end(string);
+          });
+        });
+      } else {
+        doc.output(function (string) {
+          res.contentType = 'application/pdf';
+          res.end(string);
+        });
+      }
+
+
+//      res.render('card/print', { card: results.card, qr: results.qr });
     });
 
   });

@@ -20,6 +20,11 @@ block content
                                 label.col-sm-2.control-label Информация о магазине
                                 .col-sm-6
                                     textarea.form-control#storeDescription(name='description', rows='2')
+                        fieldset
+                            .form-group.has-feedback
+                                label.col-sm-2.control-label Фото
+                                .col-sm-6
+                                    input.form-control#clientPhoto(type="file", name="image")
                     .panel-footer
                         button.btn.btn-lg.btn-info(type='submit') Сохранить
                         | &nbsp;
