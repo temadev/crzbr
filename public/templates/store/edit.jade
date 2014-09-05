@@ -5,7 +5,7 @@ block content
     h3= store.title
     .row
         .col-md-12
-            form.form-horizontal#storeForm(role='form', method='post', action='/store/edit', data-parsley-validate='', novalidate='')
+            form.form-horizontal#storeForm(role='form', method='post', action='/store/edit', data-parsley-validate='', novalidate='', enctype='multipart/form-data')
                 // START panel
                 .panel.panel-default
                     .panel-heading Основная информация
@@ -25,6 +25,9 @@ block content
                                 label.col-sm-2.control-label Фото
                                 .col-sm-6
                                     input.form-control#clientPhoto(type="file", name="image")
+                                if (store.image)
+                                    .col-sm-2
+                                        .thumbnail: img.img-responsive(src="#{store.image}")
                     .panel-footer
                         button.btn.btn-lg.btn-info(type='submit') Сохранить
                         | &nbsp;

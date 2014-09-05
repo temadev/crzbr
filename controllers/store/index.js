@@ -100,7 +100,7 @@ module.exports = function (router) {
 
   });
 
-  router.post('/edit', function (req, res) {
+  router.post('/edit', auth.isAuthenticated(), function (req, res) {
 
     var body = req.body;
 
@@ -108,6 +108,8 @@ module.exports = function (router) {
       title: body.title,
       description: body.description
     };
+    console.log(req.body);
+    console.log(req.files);
 
     Store.findByIdAndUpdate(body.id, { $set: store }, function (err, store) {
       console.log(req.files);
@@ -123,7 +125,7 @@ module.exports = function (router) {
 
   });
 
-  router.post('/create', auth.isAuthenticated(), multipartMiddleware, function (req, res) {
+  router.post('/create', auth.isAuthenticated(), function (req, res) {
 
     var newStore = new Store(req.body);
     newStore.user = req.user;

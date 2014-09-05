@@ -41,6 +41,7 @@ module.exports = function (router) {
   router.post('/create', auth.isAuthenticated(), function (req, res) {
 
     var body = req.body;
+    console.log('post-create-body', req.body);
 
     User.findOne({email: body.email}, function (err, user) {
       if (err) {
@@ -55,8 +56,15 @@ module.exports = function (router) {
             throw err;
           }
           if (req.files && req.files.photo) {
+            console.log('post-create-files-photo', req.files.photo);
             uploadS3(req.files.photo, user, function (url) {
-              res.redirect('/user/view/' + user._id);
+              console.log('post-create-files-url', url);
+              user.photo = url;
+              console.log('post-create-files-user', user);
+              user.save(function (err, user) {
+                console.log('post-create-files-user-save', user);
+                res.redirect('/user/view/' + user._id);
+              });
             });
           } else {
             res.redirect('/user/view/' + user._id);
@@ -68,6 +76,35 @@ module.exports = function (router) {
       }
       if (user) {
         res.redirect('/user/view/' + user._id);
+      }
+    });
+
+  });
+
+  router.post('/create_lazy', auth.isAuthenticated(), function (req, res) {
+
+    var body = req.body;
+
+    User.findOne({email: body.email}, function (err, user) {
+      if (err) {
+        throw err;
+      }
+      console.log(user);
+      if (!user) {
+        var newUser = new User(body);
+        newUser.created = Date.now();
+        newUser.save(function (err, user) {
+          if (err) {
+            throw err;
+          }
+          res.send({ id: user._id, title: user.lastname + ' ' + user.firstname, phone: user.phone });
+
+        });
+
+        return;
+      }
+      if (user) {
+        res.send({ id: user._id, title: user.lastname + ' ' + user.firstname, phone: user.phone });
       }
     });
 
@@ -141,15 +178,17 @@ module.exports = function (router) {
   router.post('/edit', function (req, res) {
 
     var body = req.body;
-//    console.log(req);
+    console.log(req.body);
     body.updated = Date.now();
 
     if (req.files && req.files.photo) {
-      uploadS3(req.files.photo, req.user, function (url) {
-        body.photo = url;
+      User.findById(body.id, function (err, user) {
+        uploadS3(req.files.photo, user, function (url) {
+          body.photo = url;
 
-        User.findByIdAndUpdate(body.id, { $set: body }, function (err, user) {
-          res.redirect('/user/view/' + body.id);
+          User.findByIdAndUpdate(body.id, { $set: body }, function (err, user) {
+            res.redirect('/user/view/' + body.id);
+          });
         });
       });
     } else {
@@ -173,8 +212,14 @@ function uploadS3(file, user, callback) {
     });
     uploader.on('end', function (url) {
       console.log('file available at', url);
-      User.findByIdAndUpdate(user._id, { $set: {photo: url} }, function (err, user) {
-        callback(user.photo);
+      console.log('upload-user', user);
+      User.findById(user._id, function (err, user) {
+        console.log('upload-find-user', user);
+        user.photo = url;
+        user.save(function (err, user) {
+          console.log('upload-find-user-save', user);
+          callback(user.photo);
+        });
       });
 
     });

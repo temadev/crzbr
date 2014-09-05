@@ -145,7 +145,8 @@ module.exports = function (router) {
           });
       },
       qr: function (callback) {
-        QRCode.save(path.join(__dirname, '../../.build/qr/' + req.params.id + '.png'), 'http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, url) {
+//        QRCode.save(path.join(__dirname, '../../.build/qr/' + req.params.id + '.png'), 'http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, url) {
+        QRCode.save('./tmp/' + req.params.id + '.png', 'http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, url) {
           if (err) {
             throw err;
           }
@@ -163,7 +164,8 @@ module.exports = function (router) {
       doc.font(path.join(__dirname, '../../public/fonts/RobotoCondensed-Regular.ttf'));
       doc.fontSize(9).fillColor('black').text(results.card.cc);
       doc.fontSize(14).fillColor('black').text(results.card.store.title);
-      doc.image(path.join(__dirname, '../../.build/qr/' + req.params.id + '.png'), 162, 65, {fit: [100, 100]});
+      doc.image('./tmp/' + req.params.id + '.png', 162, 65, {fit: [100, 100]});
+//      doc.image(path.join(__dirname, '../../.build/qr/' + req.params.id + '.png'), 162, 65, {fit: [100, 100]});
 
       doc.lineJoin('miter')
         .rect(0, 0, 262, 163)
@@ -175,7 +177,8 @@ module.exports = function (router) {
 
         var r = request(results.card.store.image).pipe(fs.createWriteStream(path.join(__dirname, '../../.build/logo/' + image[len])));
         r.on('finish', function () {
-          doc.image(path.join(__dirname, '../../.build/logo/' + image[len]), 7, 76, {fit: [80, 80]});
+//          doc.image(path.join(__dirname, '../../.build/logo/' + image[len]), 7, 76, {fit: [80, 80]});
+          doc.image('./tmp/logo/' + image[len], 7, 76, {fit: [80, 80]});
 
           doc.output(function (string) {
             res.contentType = 'application/pdf';
@@ -183,10 +186,7 @@ module.exports = function (router) {
           });
         });
       } else {
-        doc.output(function (string) {
-          res.contentType = 'application/pdf';
-          res.end(string);
-        });
+
       }
 
 

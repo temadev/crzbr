@@ -25,15 +25,15 @@ module.exports = function (router) {
       if (req.query.dateStart && req.query.dateEnd) {
         dateStart = formatDate(req.query.dateStart);
         dateEnd = formatDate(req.query.dateEnd);
-        query = {date: {$gt: dateStart, $lt: dateEnd}};
+        query = {date: {$gte: dateStart, $lte: dateEnd}};
       } else {
         if (req.query.dateStart) {
           dateStart = formatDate(req.query.dateStart);
-          query = {date: {$gt: dateStart}};
+          query = {date: {$gte: dateStart}};
         }
         if (req.query.dateEnd) {
           dateEnd = formatDate(req.query.dateEnd);
-          query = {date: {$lt: dateEnd}};
+          query = {date: {$lte: dateEnd}};
         }
       }
     }

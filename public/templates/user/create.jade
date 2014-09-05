@@ -5,7 +5,7 @@ block content
     h3 Новый клиент
     .row
         .col-md-12
-            form.form-horizontal#clientForm(role='form', method='post', action='/user/create', data-parsley-validate='', novalidate='')
+            form.form-horizontal#clientForm(role='form', method='post', action='/user/create', data-parsley-validate='', novalidate='', enctype='multipart/form-data')
                 // START panel
                 .panel.panel-default
                     .panel-heading Основная информация
