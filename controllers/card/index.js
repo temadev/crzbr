@@ -168,7 +168,7 @@ module.exports = function (router) {
               fdAndBuf();
           });
 
-          fs.open(path.join(__dirname, '../../../tmp/' + req.params.id + '.png'), 'w', '0666', function (err, _fd) {
+          fs.open(path.join(__dirname, '../../tmp/' + req.params.id + '.png'), 'w', '0666', function (err, _fd) {
             if (err)
             console.log(err);
             fd = _fd;
