@@ -141,6 +141,7 @@ module.exports = function (router) {
             if (err) {
               throw err;
             }
+            console.log('card', card);
             callback(null, card);
           });
       },
@@ -150,7 +151,7 @@ module.exports = function (router) {
           if (err) {
             throw err;
           }
-          console.log(url);
+          console.log('url', url);
           callback(null, url);
         });
       }
@@ -175,7 +176,8 @@ module.exports = function (router) {
         var image = results.card.store.image.split('/')
           , len = image.length;
 
-        var r = request(results.card.store.image).pipe(fs.createWriteStream(path.join(__dirname, '../../.build/logo/' + image[len])));
+        var r = request(results.card.store.image).pipe(fs.createWriteStream('./tmp/logo/' + image[len]));
+//        var r = request(results.card.store.image).pipe(fs.createWriteStream(path.join(__dirname, '../../.build/logo/' + image[len])));
         r.on('finish', function () {
 //          doc.image(path.join(__dirname, '../../.build/logo/' + image[len]), 7, 76, {fit: [80, 80]});
           doc.image('./tmp/logo/' + image[len], 7, 76, {fit: [80, 80]});
@@ -186,7 +188,10 @@ module.exports = function (router) {
           });
         });
       } else {
-
+        doc.output(function (string) {
+          res.contentType = 'application/pdf';
+          res.end(string);
+        });
       }
 
 
