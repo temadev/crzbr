@@ -148,46 +148,46 @@ module.exports = function (router) {
 
         console.log(path.join(__dirname, '../../../tmp/' + req.params.id + '.png'));
 
-        QRCode.draw('http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, canvas) {
-
-          var fd, buf, fdAndBuf = function () {
-            fs.write(fd, buf, 0, buf.length, 0, function (err, written) {
-              fs.close(fd);
-              console.log(err);
-              console.log(written);
-            });
-          };
-
-          //run non dependent async calls at the same time ish
-          canvas.toBuffer(function (err, _buf) {
-            if (err)
-              console.log(err);
-
-            buf = _buf;
-            if (fd)
-              fdAndBuf();
-          });
-
-          fs.open(path.join(__dirname, '../../tmp/' + req.params.id + '.png'), 'w', '0666', function (err, _fd) {
-            if (err)
-            console.log(err);
-            fd = _fd;
-            if (buf)
-              fdAndBuf();
-          });
-
-        });
+//        QRCode.draw('http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, canvas) {
+//
+//          var fd, buf, fdAndBuf = function () {
+//            fs.write(fd, buf, 0, buf.length, 0, function (err, written) {
+//              fs.close(fd);
+//              console.log(err);
+//              console.log(written);
+//            });
+//          };
+//
+//          //run non dependent async calls at the same time ish
+//          canvas.toBuffer(function (err, _buf) {
+//            if (err)
+//              console.log(err);
+//
+//            buf = _buf;
+//            if (fd)
+//              fdAndBuf();
+//          });
+//
+//          fs.open(path.join(__dirname, '../../../tmp/' + req.params.id + '.png'), 'w', '0666', function (err, _fd) {
+//            if (err)
+//            console.log(err);
+//            fd = _fd;
+//            if (buf)
+//              fdAndBuf();
+//          });
+//
+//        });
 
 
 //        QRCode.save(path.join(__dirname, '../../.build/qr/' + req.params.id + '.png'), 'http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, url) {
-//        QRCode.save(path.join(__dirname, '../../../tmp/' + req.params.id + '.png'), 'http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, url) {
-////          if (err) {
-////            throw err;
-////          }
-//          console.log('err', err);
-//          console.log('url', url);
-//          callback(null, url);
-//        });
+        QRCode.save(path.join(__dirname, '../../../tmp/' + req.params.id + '.png'), 'http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, url) {
+          if (err) {
+            throw err;
+          }
+          console.log('err', err);
+          console.log('url', url);
+          callback(null, url);
+        });
       }
     }, function (err, results) {
       if (err) {
