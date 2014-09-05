@@ -15,7 +15,7 @@ block content
     .row
         .col-lg-12
             .panel.panel-default
-                .panel-body
+                .panel-body#users
                     table#datatable2.table.table-striped.table-hover
                         thead
                             tr
@@ -65,5 +65,5 @@ block body_child
                     | Вы действительно хотите удалить клиента?
                 .modal-footer
                     button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
-                    button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
+                    button.btn.btn-danger#modalUserRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
     // END modal

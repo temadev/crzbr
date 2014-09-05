@@ -9,6 +9,7 @@ var auth = require('../../lib/auth')
   , Card = require('../../models/card')
   , User = require('../../models/user')
   , Purchase = require('../../models/purchase')
+  , Price = require('../../models/price')
   , s3 = require('s3');
 
 var client = s3.createClient({
@@ -146,8 +147,44 @@ module.exports = function (router) {
   router.post('/remove', function (req, res) {
 
     Store.findById(req.body.id, function (err, store) {
-      store.remove();
-      res.send(200);
+      async.parallel({
+        cards: function (callback) {
+          Card.find({store: store}).exec(function (err, cards) {
+            async.each(cards, function (card, cb) {
+              Card.findById(card._id).exec(function (err, c) {
+                Purchase.find({card: c}).exec(function (err, purchases) {
+                  async.each(purchases, function (purchase, cb) {
+                    Purchase.findById(purchase._id).exec(function (err, p) {
+                      p.remove();
+                      cb();
+                    });
+                  });
+                });
+                c.remove();
+                cb();
+              });
+            }, function () {
+              callback();
+            });
+          });
+        },
+        price: function (callback) {
+          Price.find({store: store}).exec(function (err, prices) {
+            async.each(prices, function (price, cb) {
+              Price.findById(price._id, function (err, p) {
+                p.remove();
+                cb();
+              });
+            }, function () {
+              callback();
+            });
+          });
+        }
+      }, function () {
+        store.remove();
+        res.send(200);
+      });
+
     });
 
   });

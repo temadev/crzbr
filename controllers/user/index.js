@@ -199,6 +199,35 @@ module.exports = function (router) {
 
   });
 
+  router.post('/remove', function (req, res) {
+
+    User.findById(req.body.id, function (err, user) {
+
+      Card.find({user:user}).exec(function (err, cards) {
+        async.each(cards, function (card, cb) {
+          Card.findById(card._id, function (err, c) {
+            Purchase.find({card: c}).exec(function (err, purchases) {
+              async.each(purchases, function (purchase, cb) {
+                Purchase.findById(purchase._id).exec(function (err, p) {
+                  p.remove();
+                  cb();
+                });
+              });
+            });
+            c.remove();
+            cb();
+          })
+        }, function () {
+          user.remove();
+          res.send(200);
+        });
+      });
+
+
+    });
+
+  });
+
 };
 
 function uploadS3(file, user, callback) {
