@@ -216,7 +216,7 @@ module.exports = function (router) {
             });
             c.remove();
             cb();
-          })
+          });
         }, function () {
           user.remove();
           res.send(200);

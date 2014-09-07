@@ -44,7 +44,11 @@ block content
                                     td #{showTime(purchase.date)}
                                     td
                                         a(href='/purchase/view/#{purchase._id}') #{purchase.title}
-                                    td: a(href='/user/view/#{purchase.card.user._id}') #{purchase.card.user.lastname} #{purchase.card.user.firstname} #{purchase.card.user.middlename}
+                                    td
+                                        if(purchase.card.user)
+                                            a(href='/user/view/#{purchase.card.user._id}') #{purchase.card.user.lastname} #{purchase.card.user.firstname} #{purchase.card.user.middlename}
+                                        else
+                                            a(href='/card/view/#{purchase.card._id}')  #{purchase.card.cc}
                                     td #{purchase.price}
                                     td #{purchase.quantity}
                                     td #{purchase.total}

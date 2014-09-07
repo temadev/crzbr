@@ -21,7 +21,9 @@ block content
                             .form-group
                                 label.col-sm-2.control-label(for="card") Номер карты
                                 .col-sm-10
-                                    p.form-control-static [#{card.cc}] #{card.user.lastname} #{card.user.firstname} #{card.user.middlename} (#{card.user.phone})
+                                    p.form-control-static [#{card.cc}]
+                                        if (card.user)
+                                            | &nbsp;#{card.user.lastname} #{card.user.firstname} #{card.user.middlename} (#{card.user.phone})
 
                         fieldset
                             .form-group
