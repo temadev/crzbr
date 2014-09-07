@@ -42,7 +42,7 @@ block content
                     a.btn.btn-success.pull-right.btn-xs.btn-labeled(href='/card/create/#{client._id}')
                         .btn-label: i.fa.fa-plus-circle
                         | Добавить карту
-                .panel-body
+                .panel-body#users
                     table#datatable-cards.table.table-striped.table-hover
                         thead
                             tr
@@ -75,7 +75,7 @@ block content
                     a.btn.btn-success.pull-right.btn-xs.btn-labeled(href='/purchase/create/user/#{client._id}')
                         .btn-label: i.fa.fa-plus-circle
                         | Добавить покупку
-                .panel-body
+                .panel-body#purchases
                     table#datatable2.table.table-striped.table-hover
                         thead
                             tr
@@ -91,7 +91,7 @@ block content
                                 tr(id='#{purchase._id}')
                                     td: a(href='/purchase/view/#{purchase._id}') #{purchase.title}
                                     td: a(href='/store/view/#{purchase.card.store._id}') #{purchase.card.store.title}
-                                    td #{showTime(purchase.date)}
+                                    td(data-order="#{purchase.date}") #{showTime(purchase.date)}
                                     td #{purchase.price}
                                     td #{purchase.quantity}
                                     td #{purchase.total}
@@ -100,7 +100,7 @@ block content
                                         | &nbsp;
                                         a.btn.btn-warning.btn-xs(href='/purchase/edit/#{purchase._id}'): i.fa.fa-wrench
                                         | &nbsp;
-                                        button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{purchase._id}', data-title='#{purchase.title}'): i.fa.fa-times
+                                        button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalPurchaseRemove', data-id='#{purchase._id}', data-title='#{purchase.title}'): i.fa.fa-times
                             tfoot
                                 tr
                                     th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Описание покупки')
@@ -125,5 +125,21 @@ block body_child
                     | Вы действительно хотите удалить клиента?
                 .modal-footer
                     button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
-                    button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
+                    button.btn.btn-danger#modalUserRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
+    // END modal
+
+    // START modal
+    #modalPurchaseRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+                    h4#modalRemoveLabel.modal-title
+                        | Вы собираетесь удалить покупку&nbsp;
+                        #title
+                .modal-body
+                    | Вы действительно хотите удалить покупку?
+                .modal-footer
+                    button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
+                    button.btn.btn-danger#modalPurchaseRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
     // END modal

@@ -110,7 +110,11 @@ block content
                                 tr(id='#{purchase._id}')
                                     td
                                         a(href='/purchase/view/#{purchase._id}') #{purchase.title}
-                                    td #{purchase.card.user.lastname} #{purchase.card.user.firstname} #{purchase.card.user.middlename}
+                                    td
+                                        if (purchase.card.user)
+                                            | #{purchase.card.user.lastname} #{purchase.card.user.firstname} #{purchase.card.user.middlename}
+                                        else
+                                            | #{purchase.card.cc}
                                     td #{showTime(purchase.date)}
                                     td #{purchase.price}
                                     td #{purchase.quantity}

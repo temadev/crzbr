@@ -3,7 +3,7 @@ block active-item
     - nav.menu['Покупки']['active'] = 1
 block content
     - function addZ(n){return n<10? '0'+n:''+n;}
-    - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()}
+    - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+addZ(date.getHours())+':'+addZ(date.getMinutes())}
     a(href='/purchase/create').btn.btn-labeled.btn-primary.pull-right
         span.btn-label
             i.fa.fa-plus-circle
@@ -26,7 +26,7 @@ block content
                 button.btn.btn-success(type="submit") Показать
             br
             .panel.panel-default
-                .panel-body
+                .panel-body#purchases
                     table#datatable2.table.table-striped.table-hover
                         thead
                             tr
@@ -41,7 +41,7 @@ block content
                         tbody
                             each purchase in purchases
                                 tr(id='#{purchase._id}')
-                                    td #{showTime(purchase.date)}
+                                    td(data-order="#{purchase.date}") #{showTime(purchase.date)}
                                     td
                                         a(href='/purchase/view/#{purchase._id}') #{purchase.title}
                                     td
@@ -95,5 +95,5 @@ block body_child
                     | Вы действительно хотите удалить покупку?
                 .modal-footer
                     button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
-                    button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
+                    button.btn.btn-danger#modalPurchaseRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
     // END modal

@@ -13,7 +13,7 @@ block content
     .row
         .col-lg-12
             .panel.panel-default
-                .panel-body
+                .panel-body#cards
                     table#datatable-cards.table.table-striped.table-hover
                         thead
                             tr
@@ -79,5 +79,5 @@ block body_child
                     | Вы действительно хотите удалить карту?
                 .modal-footer
                     button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
-                    button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
+                    button.btn.btn-danger#modalCardRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
     // END modal

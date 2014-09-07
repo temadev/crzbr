@@ -66,7 +66,7 @@ block content
                                     td #{index+1}
                                     td
                                         a(href='/purchase/view/#{purchase._id}') #{purchase.title}
-                                    td #{showTime(purchase.date)}
+                                    td(data-order="#{purchase.date}") #{showTime(purchase.date)}
                                     td #{purchase.price}
                                     td #{purchase.quantity}
                                     td #{purchase.total}
@@ -102,11 +102,11 @@ block body_child
                 .modal-header
                     button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
                     h4#modalRemoveLabel.modal-title
-                        | Вы собираетесь удалить магазин&nbsp;
+                        | Вы собираетесь удалить покупку&nbsp;
                         #title
                 .modal-body
-                    | Вы действительно хотите удалить магазин?
+                    | Вы действительно хотите удалить покупку?
                 .modal-footer
                     button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
-                    button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
+                    button.btn.btn-danger#modalPurchaseRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
     // END modal

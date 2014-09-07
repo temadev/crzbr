@@ -55,5 +55,55 @@
     });
   });
 
+  var removePurchaseButton = '#modalPurchaseRemoveBtn';
+
+  $('#purchases').on('click', '.btn-remove', function () {
+    var id = $(this).data("id")
+      , title = $(this).data("title");
+    $('#title').text(title);
+    $(removePurchaseButton).data('id', id)
+  });
+
+  $(document).on('click', removePurchaseButton, function () {
+
+    var $this = $(this)
+      , id = $this.data('id')
+      , csrf = $this.data('csrf');
+
+    $.ajax({
+      type: 'post',
+      url: '/purchase/remove/',
+      data: { id: id, _csrf: csrf },
+      success: function () {
+        window.location.href = "/purchase";
+      }
+    });
+  });
+
+  var removeCardButton = '#modalCardRemoveBtn';
+
+  $('#cards').on('click', '.btn-remove', function () {
+    var id = $(this).data("id")
+      , title = $(this).data("title");
+    $('#title').text(title);
+    $(removeCardButton).data('id', id)
+  });
+
+  $(document).on('click', removeCardButton, function () {
+
+    var $this = $(this)
+      , id = $this.data('id')
+      , csrf = $this.data('csrf');
+
+    $.ajax({
+      type: 'post',
+      url: '/card/remove/',
+      data: { id: id, _csrf: csrf },
+      success: function () {
+        window.location.href = "/card";
+      }
+    });
+  });
+
 
 }(jQuery, window, document));

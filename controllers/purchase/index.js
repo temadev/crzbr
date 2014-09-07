@@ -40,6 +40,7 @@ module.exports = function (router) {
 
     Purchase.find(query)
       .populate('card')
+      .sort({created: -1})
       .exec(function (err, purchases) {
         console.log(purchases);
         var opts = { path: 'card.user', model: 'User', select: 'firstname lastname middlename' };
@@ -197,10 +198,12 @@ module.exports = function (router) {
 
   router.post('/remove', function (req, res) {
 
-//    Store.findById(req.body.id, function (err, store) {
-//      store.remove();
-//      res.send(200);
-//    });
+    console.log(req.body);
+
+    Purchase.findById(req.body.id, function (err, store) {
+      store.remove();
+      res.send(200);
+    });
 
   });
 
