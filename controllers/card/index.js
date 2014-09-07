@@ -149,7 +149,7 @@ module.exports = function (router) {
         console.log(path.join(__dirname, '../../../tmp/' + req.params.id + '.png'));
 
 //        QRCode.save(path.join(__dirname, '../../.build/qr/' + req.params.id + '.png'), 'http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, url) {
-        QRCode.save(path.join(__dirname, '../../../tmp/' + req.params.id + '.png'), 'http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, url) {
+        QRCode.save(path.join(__dirname, '../../../tmp/' + req.params.id + '.png'), 'http://yarkosa.crazybuyer.ru/card/view/' + req.params.id, function (err, url) {
           if (err) {
             throw err;
           }
