@@ -200,8 +200,10 @@ module.exports = function (router) {
 
     console.log(req.body);
 
-    Purchase.findById(req.body.id, function (err, store) {
-      store.remove();
+    Purchase.findById(req.body.id, function (err, purchase) {
+      if (purchase) {
+        purchase.remove();
+      }
       res.send(200);
     });
 
