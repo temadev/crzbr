@@ -105,5 +105,31 @@
     });
   });
 
+  $(document).on('click', '#printCards', function (e) {
+
+    e.preventDefault();
+
+    var printArray = []
+      , csrf = $(this).data('csrf')
+      , inputs = '';
+
+    $('.print-card').each(function() {
+      var $this = $(this);
+      if ($this.prop('checked')) {
+        inputs += '<input type="hidden" name="print" value="' + $this.val() + '">';
+        printArray.push($this.val());
+      }
+
+    });
+
+    if (printArray.length>0) {
+      $('<form action="/card/printSelected" method="POST">' +
+      inputs +
+      '<input type="hidden" name="_csrf" value="' + csrf + '">' +
+      '</form>').submit();
+    }
+
+  });
+
 
 }(jQuery, window, document));

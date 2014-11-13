@@ -30,14 +30,14 @@ module.exports = function (router) {
         var allCards = [];
         async.each(cards, function (cardData, callback) {
 
-          Purchase.count({ card: cardData })
+          Purchase.count({card: cardData})
             .exec(function (err, purchases) {
               cardData.purchases = purchases;
               allCards.push(cardData);
               callback();
             });
         }, function () {
-          res.render('card/index', { cards: allCards });
+          res.render('card/index', {cards: allCards});
         });
 
       });
@@ -54,19 +54,22 @@ module.exports = function (router) {
 
   router.post('/create', auth.isAuthenticated(), multipartMiddleware, function (req, res) {
 
-    var newCard = new Card({
-      user: req.body.user_id ? req.body.user_id : null,
-      store: req.body.store,
-      cc: cc.generate({ parts: 4 })
-    });
+    var count = req.body.count
+      , user = req.body.user_id;
 
-    newCard.save(function (err, card) {
-      if (card.user) {
-        res.redirect('/card/view/' + card._id);
-      } else {
+    for (var i = 0; i < count; i++) {
+      var newCard = new Card({
+        user: user ? user : null,
+        store: req.body.store,
+        cc: cc.generate({parts: 4})
+      });
+
+      newCard.save();
+
+      if (count - i === 1) {
         res.redirect('/card/');
       }
-    });
+    }
 
   });
 
@@ -115,88 +118,29 @@ module.exports = function (router) {
       if (err) {
         console.log(err);
       }
-      res.render('card/view', { card: results.card, purchases: results.purchases, qr: results.qr });
+      res.render('card/view', {card: results.card, purchases: results.purchases, qr: results.qr});
     });
 
   });
 
-//  router.get('/view/:id/qr.png', function (req, res) {
-//    QRCode.save(path.join(__dirname, '../../public/tmp/' + req.params.id), 'http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, url) {
-//      if (err) {
-//        throw err;
-//      }
-//
-//      res.end(url);
-//    });
-//  });
-
   router.get('/view/:id/print', auth.isAuthenticated(), function (req, res) {
 
-    async.parallel({
-      card: function (callback) {
-        Card.findOne({_id: req.params.id})
-          .populate('user store', 'title firstname lastname middlename email phone image')
-          .exec(function (err, card) {
-            if (err) {
-              throw err;
-            }
-            console.log('card', card);
-            callback(null, card);
-          });
-      },
-      qr: function (callback) {
+    var id = req.params.id;
 
-        console.log(path.join(__dirname, '../../../tmp/' + req.params.id + '.png'));
+    drawCard(id, function (string) {
+      res.contentType = 'application/pdf';
+      res.end(string);
+    });
 
-//        QRCode.save(path.join(__dirname, '../../.build/qr/' + req.params.id + '.png'), 'http://crzbr.herokuapp.com/card/view/' + req.params.id, function (err, url) {
-        QRCode.save(path.join(__dirname, '../../../tmp/' + req.params.id + '.png'), 'http://yarkosa.crazybuyer.ru/card/view/' + req.params.id, function (err, url) {
-          if (err) {
-            throw err;
-          }
-          console.log('err', err);
-          console.log('url', url);
-          callback(null, url);
-        });
-      }
-    }, function (err, results) {
-      if (err) {
-        console.log(err);
-      }
+  });
 
-      var doc = new PDFDocument({ size: 'A4', margins: { top: 5, bottom: 5, left: 5, right: 5 } });
+  router.post('/printSelected', auth.isAuthenticated(), function (req, res) {
 
-      doc.font(path.join(__dirname, '../../public/fonts/RobotoCondensed-Regular.ttf'));
-      doc.fontSize(9).fillColor('black').text(results.card.cc);
-      doc.fontSize(14).fillColor('black').text(results.card.store.title);
-      doc.image(path.join(__dirname, '../../../tmp/' + req.params.id + '.png'), 162, 65, {fit: [100, 100]});
-//      doc.image(path.join(__dirname, '../../.build/qr/' + req.params.id + '.png'), 162, 65, {fit: [100, 100]});
+    console.log(req.body.print);
 
-      doc.lineJoin('miter')
-        .rect(0, 0, 262, 163)
-        .stroke();
-
-      if (results.card.store.image) {
-        var image = results.card.store.image.split('/')
-          , len = image.length;
-
-        var r = request(results.card.store.image).pipe(fs.createWriteStream(path.join(__dirname, '../../../tmp/' + image[len])));
-//        var r = request(results.card.store.image).pipe(fs.createWriteStream(path.join(__dirname, '../../.build/logo/' + image[len])));
-        r.on('finish', function () {
-//          doc.image(path.join(__dirname, '../../.build/logo/' + image[len]), 7, 76, {fit: [80, 80]});
-          doc.image(path.join(__dirname, '../../../tmp/' + image[len]), 7, 76, {fit: [80, 80]});
-
-          doc.output(function (string) {
-            res.contentType = 'application/pdf';
-            res.end(string);
-          });
-        });
-      } else {
-        doc.output(function (string) {
-          res.contentType = 'application/pdf';
-          res.end(string);
-        });
-      }
-
+    drawCard(req.body.print, function (string) {
+      res.contentType = 'application/pdf';
+      res.end(string);
     });
 
   });
@@ -205,12 +149,12 @@ module.exports = function (router) {
 
     var id = req.params.id;
 
-    Card.findOne({ _id: id })
+    Card.findOne({_id: id})
       .exec(function (err, card) {
         if (err) {
           console.log(err);
         }
-        res.render('card/edit', { card: card });
+        res.render('card/edit', {card: card});
       });
 
   });
@@ -225,7 +169,7 @@ module.exports = function (router) {
     if (body.user_id) {
       User.findById(body.user_id).exec(function (err, user) {
         card.user = user._id;
-        Card.findByIdAndUpdate(body.id, { $set: card }, function (err, card) {
+        Card.findByIdAndUpdate(body.id, {$set: card}, function (err, card) {
           res.redirect('/card/view/' + body.id);
         });
       });
@@ -237,11 +181,128 @@ module.exports = function (router) {
 
   router.post('/remove', function (req, res) {
 
-//    Store.findById(req.body.id, function (err, store) {
-//      store.remove();
-//      res.send(200);
-//    });
+    Card.findById(req.body.id, function (err, card) {
+      Purchase.find({card: card._id}, function (err, purchases) {
+        async.each(purchases, function (purchase, cb) {
+          Purchase.findByIdAndRemove(purchase._id, function () {
+            cb();
+          });
+        }, function () {
+          card.remove();
+          res.send(200);
+        });
+      });
+    });
 
   });
 
 };
+
+function drawCard(id, cb) {
+
+  var cards;
+
+  if( typeof id === 'string' ) {
+    cards = [ id ];
+  } else {
+    cards = id;
+  }
+
+  var doc = new PDFDocument({size: 'A4', margins: {top: 5, bottom: 5, left: 5, right: 5}});
+
+  var i = 0
+    , row = 0
+    , top = 0
+    , qr_top = 65
+    , img_top = 76
+    , text1_top = 10
+    , text2_top = 20
+    , text1_left
+    , text2_left
+    , qr_left
+    , img_left
+    , left
+    , right = 262
+    , bottom = 163;
+
+  async.eachSeries(cards, function (card, cb) {
+
+    async.parallel({
+      card: function (callback) {
+        Card.findOne({_id: card})
+          .populate('user store', 'title firstname lastname middlename email phone image')
+          .exec(function (err, card) {
+            callback(null, card);
+          });
+      },
+      qr: function (callback) {
+        QRCode.save(path.join(__dirname, '../../../tmp/' + card + '.png'), 'http://yarkosa.crazybuyer.ru/card/view/' + card, function (err, url) {
+          callback(null, url);
+        });
+      }
+    }, function (err, results) {
+
+      if (i !== 0 && i % 10 === 0) {
+        doc.addPage();
+        row = 0;
+        top = 0;
+        qr_top = 65;
+        img_top = 76;
+        text1_top = 10;
+        text2_top = 20;
+      }
+
+      if (row > 0) {
+        top = 163*row;
+        text1_top = 10 + 163*row;
+        text2_top = 20 + 163*row;
+        qr_top = 65 + 163*row;
+        img_top = 76 + 163*row;
+      }
+
+      if (i % 2 === 1) {
+        text1_left = 10 + 262;
+        text2_left = 10 + 262;
+        qr_left = 162 + 262;
+        img_left = 7 + 262;
+        left = 262;
+        row++;
+      } else {
+        text1_left = 10;
+        text2_left = 10;
+        qr_left = 162;
+        img_left = 7;
+        left = 0;
+      }
+
+
+      doc.font(path.join(__dirname, '../../public/fonts/RobotoCondensed-Regular.ttf'));
+      doc.fontSize(9).fillColor('black').text(results.card.cc, text1_left, text1_top);
+      doc.fontSize(14).fillColor('black').text(results.card.store.title, text2_left, text2_top);
+      doc.image(path.join(__dirname, '../../../tmp/' + card + '.png'), qr_left, qr_top, {fit: [100, 100]});
+      doc.lineJoin('miter').rect(left, top, right, bottom).stroke();
+
+      if (results.card.store.image) {
+        var image = results.card.store.image.split('/')
+          , len = image.length;
+
+        var createImage = request(results.card.store.image).pipe(fs.createWriteStream(path.join(__dirname, '../../../tmp/' + image[len] + card)));
+        createImage.on('finish', function () {
+          doc.image(path.join(__dirname, '../../../tmp/' + image[len] + card), img_left, img_top, {fit: [80, 80]});
+          i++;
+          cb();
+        });
+      } else {
+        i++;
+        cb();
+      }
+
+    });
+
+  }, function () {
+    doc.output(function (string) {
+      cb(string);
+    });
+  });
+
+}

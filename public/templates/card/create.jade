@@ -19,10 +19,19 @@ block content
                                             option(value='#{store._id}')= store.title
                         fieldset
                             .form-group
-                                label.col-sm-2.control-label(for="user") Email
-                                .col-sm-10
-                                    input.form-control#autocomplete-users(type="text", name="user")
-                                    input#selction-users(type="hidden", name="user_id")
+                              label.col-sm-2.control-label(for="user") Телефон
+                              .col-sm-8
+                                input.form-control#autocomplete-users(type="text", name="user")
+                                input#selction-users(type="hidden", name="user_id")
+                              .col-sm-1
+                                a.btn.btn-success(data-toggle='modal', href='#modalNewClient')
+                                  i.fa.fa-plus-circle
+                        fieldset
+                          .form-group
+                            label.col-sm-2.control-label Количество
+                            .col-sm-2
+                              input.form-control(type="number", name="count", value="1", min='1', max='100')
+
 
                     .panel-footer
                         button.btn.btn-lg.btn-info(type='submit') Сохранить
@@ -31,3 +40,46 @@ block content
                         input(type="hidden", name="_csrf", value="#{_csrf}")
                 // END panel
     // END row
+block body_child
+  // START modal
+  #modalNewClient.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalNewClientLabel', aria-hidden='true')
+    .modal-dialog
+      form#clientForm(role='form', action='/user/create_lazy', data-bv-feedbackicons-valid="fa fa-check", data-bv-feedbackicons-invalid="fa fa-times", data-bv-feedbackicons-validating="fa fa-refresh")
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+            h4#modalNewClientLabel.modal-title Новый клиент
+          .modal-body
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Фамилия
+                .col-sm-6
+                  input.form-control(type='text', name='lastname', required='required')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Имя
+                .col-sm-6
+                  input.form-control(type='text', name='firstname', required='required')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Отчество
+                .col-sm-6
+                  input.form-control(type='text', name='middlename')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Телефон
+                .col-sm-6
+                  input.form-control(type='text', name='phone', required='required')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Email
+                .col-sm-6
+                  input.form-control(type='text', name='email', required='required')
+            #clientMessage.alert.alert-danger(role='alert', style='display:none')
+          .modal-footer
+            input(type='hidden', name='role', value='user')
+            input(type='hidden', name='role', value='user')
+            button.btn.btn-default(type='button', data-dismiss='modal') Отмена
+            button.btn.btn-primary(type='submit') Добавить
+            input(type="hidden", name="_csrf", value="#{_csrf}")
+  // END modal

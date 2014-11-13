@@ -27,7 +27,7 @@ block content
             br
             .panel.panel-default
                 .panel-body#purchases
-                    table#datatable2.table.table-striped.table-hover
+                    table#purchasesTable.table.table-striped.table-hover
                         thead
                             tr
                                 th Дата
@@ -41,7 +41,7 @@ block content
                         tbody
                             each purchase in purchases
                                 tr(id='#{purchase._id}')
-                                    td(data-order="#{purchase.date}") #{showTime(purchase.date)}
+                                    td(data-order="#{purchase.date.getTime()}") #{showTime(purchase.date)}
                                     td
                                         a(href='/purchase/view/#{purchase._id}') #{purchase.title}
                                     td
