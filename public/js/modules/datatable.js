@@ -66,7 +66,7 @@
         'ordering': true,  // Column ordering
         'info':     true,  // Bottom left status text
         'order': [
-          [ 0, 'asc' ]
+          [ 0, 'desc' ]
         ],
         // Text translation options
         // Note the required keywords between underscores (e.g _MENU_)
