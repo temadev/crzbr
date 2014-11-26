@@ -26,22 +26,17 @@ block content
                     a.btn.btn-link(href='/price/edit/#{price._id}'): i.fa.fa-wrench
                         | &nbsp;Изменить
                     | &nbsp;
-                    button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalRemove', data-id='#{price._id}', data-title='#{price.title}'): i.fa.fa-times
+                    button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalRemove', data-id='#{price._id}', data-title='#{price.title}', data-type='price'): i.fa.fa-times
                         | &nbsp;Удалить
     // END row
 block body_child
-    // START modal
-    #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
-        .modal-dialog
-            .modal-content
-                .modal-header
-                    button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
-                    h4#modalRemoveLabel.modal-title
-                        | Вы собираетесь удалить товар/услугу&nbsp;
-                        #title
-                .modal-body
-                    | Вы действительно хотите удалить товар/услугу?
-                .modal-footer
-                    button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
-                    button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
-    // END modal
+  #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+          h4#modalRemoveLabel.modal-title Удалить
+        .modal-body#modalRemoveTitle
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
+          button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить

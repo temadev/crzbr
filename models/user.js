@@ -1,13 +1,14 @@
 'use strict';
 
 
-var mongoose = require('mongoose'),
-  bcrypt = require('bcrypt'),
-  crypto = require('../lib/crypto');
+var mongoose = require('mongoose')
+  , Schema = mongoose.Schema
+  , bcrypt = require('bcrypt')
+  , crypto = require('../lib/crypto');
 
 var userModel = function () {
 
-  var userSchema = mongoose.Schema({
+  var userSchema = Schema({
     firstname: String,
     lastname: String,
     middlename: String,
@@ -15,6 +16,7 @@ var userModel = function () {
     email: { type: String, unique: true },
     password: String,
     role: String,
+    store: { type: Schema.Types.ObjectId, ref: 'User' },
     post: String,
     photo: String,
     created: Date,

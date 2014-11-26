@@ -32,7 +32,7 @@ block content
                                         | &nbsp;
                                         a.btn.btn-warning.btn-xs(href='/price/edit/#{price._id}'): i.fa.fa-wrench
                                         | &nbsp;
-                                        button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{price._id}', data-title='#{price.title}'): i.fa.fa-times
+                                        button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{price._id}', data-title='#{price.title}', data-type='price'): i.fa.fa-times
                             tfoot
                                 tr
                                     th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Название')
@@ -41,18 +41,13 @@ block content
                                     th
     // END DATATABLE 2
 block body_child
-    // START modal
-    #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
-        .modal-dialog
-            .modal-content
-                .modal-header
-                    button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
-                    h4#modalRemoveLabel.modal-title
-                        | Вы собираетесь удалить товар/услугу&nbsp;
-                        #title
-                .modal-body
-                    | Вы действительно хотите удалить товар/услугу?
-                .modal-footer
-                    button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
-                    button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
-    // END modal
+  #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+          h4#modalRemoveLabel.modal-title Удалить
+        .modal-body#modalRemoveTitle
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
+          button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить

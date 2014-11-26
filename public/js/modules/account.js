@@ -7,100 +7,53 @@
 
   var removeButton = '#modalRemoveBtn';
 
-  $('#stores').on('click', '.btn-remove', function () {
-    var id = $(this).data("id")
-      , title = $(this).data("title");
-    $('#title').text(title);
-    $(removeButton).data('id', id)
+  $(document).on('click', '.btn-remove', function () {
+    var $this = $(this)
+      , id = $this.data('id')
+      , type = $this.data('type')
+      , title = $this.data('title')
+      , back = $this.data('back')
+      , label = 'Вы собираетесь удалить';
+
+    if (type === 'user') {
+      label = label + ' клиента ' + title
+    }
+    if (type === 'store') {
+      label = label + ' магазин ' + title
+    }
+    if (type === 'card') {
+      label = label + ' карту ' + title
+    }
+    if (type === 'purchase') {
+      label = label + ' покупку ' + title
+    }
+    if (type === 'price') {
+      label = label + ' товар/услугу ' + title
+    }
+
+    $('#modalRemoveTitle').text(label);
+    $(removeButton).data('id', id);
+    $(removeButton).data('type', type);
+    $(removeButton).data('back', back);
   });
 
   $(document).on('click', removeButton, function () {
-
     var $this = $(this)
       , id = $this.data('id')
+      , type = $this.data('type')
+      , back = $this.data('back')
       , csrf = $this.data('csrf');
 
     $.ajax({
       type: 'post',
-      url: '/store/remove/',
-      data: { id: id, _csrf: csrf },
+      url: '/' + type + '/remove/',
+      data: {id: id, _csrf: csrf},
       success: function () {
-        window.location.href = "/store";
-      }
-    });
-  });
-
-  var removeUserButton = '#modalUserRemoveBtn';
-
-  $('#users').on('click', '.btn-remove', function () {
-    var id = $(this).data("id")
-      , title = $(this).data("title");
-    $('#title').text(title);
-    $(removeUserButton).data('id', id)
-  });
-
-  $(document).on('click', removeUserButton, function () {
-
-    var $this = $(this)
-      , id = $this.data('id')
-      , csrf = $this.data('csrf');
-
-    $.ajax({
-      type: 'post',
-      url: '/user/remove/',
-      data: { id: id, _csrf: csrf },
-      success: function () {
-        window.location.href = "/user";
-      }
-    });
-  });
-
-  var removePurchaseButton = '#modalPurchaseRemoveBtn';
-
-  $('#purchases').on('click', '.btn-remove', function () {
-    var id = $(this).data("id")
-      , title = $(this).data("title");
-    $('#title').text(title);
-    $(removePurchaseButton).data('id', id)
-  });
-
-  $(document).on('click', removePurchaseButton, function () {
-
-    var $this = $(this)
-      , id = $this.data('id')
-      , csrf = $this.data('csrf');
-
-    $.ajax({
-      type: 'post',
-      url: '/purchase/remove/',
-      data: { id: id, _csrf: csrf },
-      success: function () {
-        window.location.href = "/purchase";
-      }
-    });
-  });
-
-  var removeCardButton = '#modalCardRemoveBtn';
-
-  $('#cards').on('click', '.btn-remove', function () {
-    var id = $(this).data("id")
-      , title = $(this).data("title");
-    $('#title').text(title);
-    $(removeCardButton).data('id', id)
-  });
-
-  $(document).on('click', removeCardButton, function () {
-
-    var $this = $(this)
-      , id = $this.data('id')
-      , csrf = $this.data('csrf');
-
-    $.ajax({
-      type: 'post',
-      url: '/card/remove/',
-      data: { id: id, _csrf: csrf },
-      success: function () {
-        window.location.href = "/card";
+        if (back) {
+          window.location.href = back;
+        } else {
+          window.location.href = '/' + type;
+        }
       }
     });
   });
@@ -113,7 +66,7 @@
       , csrf = $(this).data('csrf')
       , inputs = '';
 
-    $('.print-card').each(function() {
+    $('.print-card').each(function () {
       var $this = $(this);
       if ($this.prop('checked')) {
         inputs += '<input type="hidden" name="print" value="' + $this.val() + '">';
@@ -122,7 +75,7 @@
 
     });
 
-    if (printArray.length>0) {
+    if (printArray.length > 0) {
       $('<form action="/card/printSelected" method="POST">' +
       inputs +
       '<input type="hidden" name="_csrf" value="' + csrf + '">' +

@@ -36,7 +36,7 @@ block content
                         i.fa.fa-print
                         | &nbsp;Напечатать
                     | &nbsp;
-                    button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalRemoveCard', data-id='#{card._id}', data-title='#{card.cc}')
+                    button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalCardRemove', data-id='#{card._id}', data-title='#{card.cc}', data-type='card')
                         i.fa.fa-times
                         | &nbsp;Удалить карту
     // END row
@@ -78,7 +78,7 @@ block content
                                         a.btn.btn-warning.btn-xs(href='/purchase/edit/#{purchase._id}')
                                             i.fa.fa-wrench
                                         | &nbsp;
-                                        button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemovePurchase', data-id='#{purchase._id}', data-title='#{purchase.title}')
+                                        button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemovePurchase', data-id='#{purchase._id}', data-title='#{purchase.title}', data-type='purchase', data-back='/card/view/#{card._id}')
                                             i.fa.fa-times
                             tfoot
                                 tr
@@ -96,33 +96,13 @@ block content
                                     th
     // END DATATABLE 2
 block body_child
-    // START modal
-    #modalRemovePurchase.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
-        .modal-dialog
-            .modal-content
-                .modal-header
-                    button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
-                    h4#modalRemoveLabel.modal-title
-                        | Вы собираетесь удалить покупку&nbsp;
-                        #title
-                .modal-body
-                    | Вы действительно хотите удалить покупку?
-                .modal-footer
-                    button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
-                    button.btn.btn-danger#modalPurchaseRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
-    // END modal
-    // START modal
-    #modalRemoveCard.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
-      .modal-dialog
-        .modal-content
-          .modal-header
-            button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
-            h4#modalRemoveLabel.modal-title
-              | Вы собираетесь удалить карту&nbsp;
-              #title
-          .modal-body
-            | Вы действительно хотите удалить карту?
-          .modal-footer
-            button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
-            button.btn.btn-danger#modalCardRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
-    // END modal
+  #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+          h4#modalRemoveLabel.modal-title Удалить
+        .modal-body#modalRemoveTitle
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
+          button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
