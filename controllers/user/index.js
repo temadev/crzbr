@@ -2,8 +2,6 @@
 
 
 var auth = require('../../lib/auth')
-  , multipart = require('connect-multiparty')
-  , multipartMiddleware = multipart()
   , async = require('async')
   , Store = require('../../models/store')
   , Card = require('../../models/card')
@@ -23,6 +21,7 @@ module.exports = function (router) {
   router.get('/', auth.isAuthenticated(), function (req, res) {
 
     User.find({})
+      .populate('owner')
       .exec(function (err, users) {
         if (err) {
           throw err;
@@ -40,29 +39,27 @@ module.exports = function (router) {
 
   router.post('/create', auth.isAuthenticated(), function (req, res) {
 
-    var body = req.body;
-    console.log('post-create-body', req.body);
+    var client = req.body;
+    if (!client.role) {
+      client.role = 'user';
+    }
+    client.owner = req.user;
 
-    User.findOne({email: body.email}, function (err, user) {
+    User.findOne({email: client.email}, function (err, user) {
       if (err) {
         throw err;
       }
-      console.log(user);
       if (!user) {
-        var newUser = new User(body);
+        var newUser = new User(client);
         newUser.created = Date.now();
         newUser.save(function (err, user) {
           if (err) {
             throw err;
           }
           if (req.files && req.files.photo) {
-            console.log('post-create-files-photo', req.files.photo);
             uploadS3(req.files.photo, user, function (url) {
-              console.log('post-create-files-url', url);
               user.photo = url;
-              console.log('post-create-files-user', user);
               user.save(function (err, user) {
-                console.log('post-create-files-user-save', user);
                 res.redirect('/user/view/' + user._id);
               });
             });
@@ -83,15 +80,16 @@ module.exports = function (router) {
 
   router.post('/create_lazy', auth.isAuthenticated(), function (req, res) {
 
-    var body = req.body;
+    var client = req.body;
+    client.role = 'user';
+    client.owner = req.user;
 
-    User.findOne({email: body.email}, function (err, user) {
+    User.findOne({email: client.email}, function (err, user) {
       if (err) {
         throw err;
       }
-      console.log(user);
       if (!user) {
-        var newUser = new User(body);
+        var newUser = new User(client);
         newUser.created = Date.now();
         newUser.save(function (err, user) {
           if (err) {
@@ -177,23 +175,21 @@ module.exports = function (router) {
 
   router.post('/edit', function (req, res) {
 
-    var body = req.body;
-    console.log(req.body);
-    body.updated = Date.now();
+    var client = req.body;
+    client.updated = Date.now();
 
     if (req.files && req.files.photo) {
-      User.findById(body.id, function (err, user) {
+      User.findById(client.id, function (err, user) {
         uploadS3(req.files.photo, user, function (url) {
-          body.photo = url;
-
-          User.findByIdAndUpdate(body.id, { $set: body }, function (err, user) {
-            res.redirect('/user/view/' + body.id);
+          client.photo = url;
+          User.findByIdAndUpdate(client.id, { $set: client }, function (err, user) {
+            res.redirect('/user/view/' + client.id);
           });
         });
       });
     } else {
-      User.findByIdAndUpdate(body.id, { $set: body }, function (err, user) {
-        res.redirect('/user/view/' + body.id);
+      User.findByIdAndUpdate(client.id, { $set: client }, function (err, user) {
+        res.redirect('/user/view/' + client.id);
       });
     }
 

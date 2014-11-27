@@ -22,7 +22,13 @@ module.exports = function (router) {
 
   router.get('/', auth.isAuthenticated(), function (req, res) {
 
-    Store.find({user: req.user})
+    var query = {};
+
+    if (req.user && req.user.role !== 'admin')
+      query = {user: req.user};
+
+    Store.find(query)
+      .populate('user')
       .exec(function (err, stores) {
         if (err) {
           throw err;
@@ -91,12 +97,18 @@ module.exports = function (router) {
 
   router.get('/edit/:id', function (req, res) {
 
-    var id = req.params.id;
+    var id = req.params.id
+      , query = { _id: id };
 
-    Store.findOne({ _id: id })
+    if (req.user && req.user.role !== 'admin')
+      query = { _id: id, user: req.user._id };
+
+    Store.findOne(query)
       .exec(function (err, store) {
-        console.log(store);
-        res.render('store/edit', { store: store });
+        if (store)
+          res.render('store/edit', { store: store });
+        else
+          res.redirect('/store');
       });
 
   });
@@ -109,14 +121,10 @@ module.exports = function (router) {
       title: body.title,
       description: body.description
     };
-    console.log(req.body);
-    console.log(req.files);
 
     Store.findByIdAndUpdate(body.id, { $set: store }, function (err, store) {
-      console.log(req.files);
       if (req.files && req.files.image) {
         uploadS3(req.files.image, store, function (url) {
-          console.log(url);
           res.redirect('/store/view/' + store._id);
         });
       } else {
@@ -198,14 +206,12 @@ function uploadS3(file, store, callback) {
       console.error('unable to upload:', err.stack);
     });
     uploader.on('progress', function (amountDone, amountTotal) {
-      console.log('progress', amountDone, amountTotal);
+      //console.log('progress', amountDone, amountTotal);
     });
     uploader.on('end', function (url) {
-      console.log('file available at', url);
       Store.findByIdAndUpdate(store._id, { $set: {image: url} }, function (err, store) {
         callback(store.image);
       });
-
     });
   }
 }

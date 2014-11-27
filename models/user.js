@@ -16,7 +16,7 @@ var userModel = function () {
     email: { type: String, unique: true },
     password: String,
     role: String,
-    store: { type: Schema.Types.ObjectId, ref: 'User' },
+    owner: { type: Schema.Types.ObjectId, ref: 'User' },
     post: String,
     photo: String,
     created: Date,

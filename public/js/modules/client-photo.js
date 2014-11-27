@@ -3,13 +3,11 @@
  * DateTime Picker init
  =========================================================*/
 
-(function($, window, document){
+(function ($, window, document) {
 
-  $(function(){
+  $(function () {
 
-    var form = $('#clientForm');
-
-    form.bootstrapValidator()
+    $('#clientForm').bootstrapValidator()
       .on('success.form.bv', function (e) {
 
         e.preventDefault();

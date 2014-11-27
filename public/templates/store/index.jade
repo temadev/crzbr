@@ -1,51 +1,42 @@
 extends ../layouts/main
 block active-item
-    - nav.menu['Магазины']['active'] = 1
+  - nav.menu['Магазины']['active'] = 1
 block content
-    a(href='/store/create').btn.btn-labeled.btn-primary.pull-right
-        span.btn-label
-            i.fa.fa-plus-circle
-        | Новый магазин
-    h3 Магазины
-        br
-        small Список моих магазинов
+  a(href='/store/create').btn.btn-labeled.btn-primary.pull-right
+    span.btn-label
+      i.fa.fa-plus-circle
+    | Новый магазин
+  h3 Магазины
+    br
+    small Список моих магазинов
 
-    // START DATATABLE 2
-    .row
-        .col-lg-12
-            .panel.panel-default
-                .panel-body#stores
-                    table#datatable2.table.table-striped.table-hover
-                        thead
-                            tr
-                                th Название
-                                th Информация
-                                th Действия
-                        tbody
-                            each store in stores
-                                tr(id='#{store._id}')
-                                    td
-                                        a(href='/store/view/#{store._id}')
-                                            //if store.image
-                                                img.img-circle(src='#{store.image}', title='#{store.title}', style='width:60px')
-                                            | #{store.title}
-                                    td #{store.description}
-                                    td
-                                        a.btn.btn-primary.btn-xs(href='/store/view/#{store._id}')
-                                            i.fa.fa-search
-                                        | &nbsp;
-                                        a.btn.btn-warning.btn-xs(href='/store/edit/#{store._id}')
-                                            i.fa.fa-wrench
-                                        | &nbsp;
-                                        button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{store._id}', data-title='#{store.title}', data-type='store')
-                                            i.fa.fa-times
-                            tfoot
-                                tr
-                                    th
-                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Название')
-                                    th
-                                    th
-    // END DATATABLE 2
+  .row
+    .col-lg-12
+      .panel.panel-default
+        .panel-body
+          table#datatable2.table.table-striped.table-hover
+            thead
+              tr
+                th Название
+                th Информация
+                if user.role === 'admin'
+                  th Владелец
+                th.action
+            tbody
+              each store in stores
+                tr(id='#{store._id}')
+                  td
+                    a(href='/store/view/#{store._id}') #{store.title}
+                  td #{store.description}
+                  if user.role === 'admin'
+                    td: a(href='/user/view/#{store.user._id}') #{store.user.lastname} #{store.user.firstname} #{store.user.middlename}
+                  td
+                    a.btn.btn-warning.btn-xs(href='/store/edit/#{store._id}')
+                      i.fa.fa-wrench
+                    | &nbsp;
+                    button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{store._id}', data-title='#{store.title}', data-type='store')
+                      i.fa.fa-times
+
 block body_child
   #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
     .modal-dialog

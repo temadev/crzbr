@@ -1,56 +1,55 @@
 extends ../layouts/main
 block active-item
-    - nav.menu['Клиенты']['active'] = 1
+  - nav.menu['Клиенты']['active'] = 1
 block content
-    h3 Новый клиент
-    .row
-        .col-md-12
-            form.form-horizontal#clientForm(role='form', method='post', action='/user/create', data-parsley-validate='', novalidate='', enctype='multipart/form-data')
-                // START panel
-                .panel.panel-default
-                    .panel-heading Основная информация
-                    .panel-body
-                        fieldset
-                            .form-group
-                                label.col-sm-2.control-label Фамилия
-                                .col-sm-6
-                                    input.form-control(type='text', name='lastname', required='required')
-                        fieldset
-                            .form-group
-                                label.col-sm-2.control-label Имя
-                                .col-sm-6
-                                    input.form-control(type='text', name='firstname', required='required')
-                        fieldset
-                            .form-group
-                                label.col-sm-2.control-label Отчество
-                                .col-sm-6
-                                    input.form-control(type='text', name='middlename')
-                        fieldset
-                            .form-group
-                                label.col-sm-2.control-label Телефон
-                                .col-sm-6
-                                    input.form-control(type='text', name='phone')
-                        fieldset
-                            .form-group
-                                label.col-sm-2.control-label Email
-                                .col-sm-6
-                                    input.form-control(type='text', name='email', required='required')
-                        fieldset
-                            .form-group
-                                label.col-sm-2.control-label Статус
-                                .col-sm-6
-                                    select.form-control(name='role')
-                                        option(value='user', selected='') Клиент
-                                        option(value='admin') Админ
-                        fieldset
-                            .form-group.has-feedback
-                                label.col-sm-2.control-label Фото
-                                .col-sm-6
-                                    input.form-control#clientPhoto(type="file", name="photo")
-                    .panel-footer
-                        button.btn.btn-lg.btn-info(type='submit') Сохранить
-                        | &nbsp;
-                        a.btn.btn-lg.btn-default(href="/user") Отменить
-                        input(type="hidden", name="_csrf", value="#{_csrf}")
-                // END panel
-    // END row
+  h3 Новый клиент
+  .row
+    .col-md-12
+      form.form-horizontal(role='form', method='post', action='/user/create', enctype='multipart/form-data')
+        .panel.panel-default
+          .panel-heading Основная информация
+          .panel-body
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Фамилия
+                .col-sm-6
+                  input.form-control(type='text', name='lastname', required='required')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Имя
+                .col-sm-6
+                  input.form-control(type='text', name='firstname', required='required')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Отчество
+                .col-sm-6
+                  input.form-control(type='text', name='middlename')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Телефон
+                .col-sm-6
+                  input.form-control(type='text', name='phone')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Email
+                .col-sm-6
+                  input.form-control(type='text', name='email', required='required')
+            if user.role === 'admin'
+              fieldset
+                .form-group
+                  label.col-sm-2.control-label Тип клиента
+                  .col-sm-6
+                    select.form-control(name='role')
+                      option(value='user', selected='') Клиент
+                      option(value='corp') Организация
+                      option(value='admin') Админ
+            fieldset
+              .form-group.has-feedback
+                label.col-sm-2.control-label Фото
+                .col-sm-6
+                  input.form-control#clientPhoto(type="file", name="photo")
+          .panel-footer
+            button.btn.btn-lg.btn-info(type='submit') Сохранить
+            | &nbsp;
+            a.btn.btn-lg.btn-default(href="/user") Отменить
+            input(type="hidden", name="_csrf", value="#{_csrf}")
