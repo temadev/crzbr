@@ -1,0 +1,37 @@
+extends ../layouts/main
+block active-item
+  - nav.menu['Покупки']['active'] = 1
+block content
+  h3 Покупка
+  .row
+    .col-md-12
+      form.form-horizontal#purchaseForm(role='form', method='post', action='/purchase/edit')
+        .panel.panel-default
+          .panel-heading Основная информация
+          .panel-body
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Название покупки
+                .col-sm-6
+                  input.form-control(type='text', name='title', required='required', value='#{purchase.title}')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Цена
+                .col-sm-6
+                  input.form-control(type='number', name='price', required='required', value='#{purchase.price}')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Количество
+                .col-sm-6
+                  input.form-control(type='number', name='quantity', required='required', value='#{purchase.quantity}')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Сумма
+                .col-sm-6
+                  input.form-control(type='number', name='total', required='required', value='#{purchase.total}')
+          .panel-footer
+            button.btn.btn-lg.btn-info(type='submit') Сохранить
+            | &nbsp;
+            a.btn.btn-lg.btn-default(href="/purchase") Отменить
+            input(type="hidden", name="id", value="#{purchase._id}")
+            input(type="hidden", name="_csrf", value="#{_csrf}")

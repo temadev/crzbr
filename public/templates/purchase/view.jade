@@ -1,0 +1,50 @@
+extends ../layouts/main
+block active-item
+  - nav.menu['Покупки']['active'] = 1
+block content
+  - function addZ(n){return n<10? '0'+n:''+n;}
+  - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()}
+  h3 #{purchase.title}
+    br
+    small #{card.store.title}
+  .row
+    .col-lg-8
+      .panel.panel-default
+        .panel-heading Описание покупки
+        .panel-body
+          dl.dl-horizontal
+            dt Название
+            dd #{purchase.title}
+            dt Дата
+            dd #{showTime(purchase.date)}
+            dt Цена за ед.
+            dd #{purchase.price}
+            dt Количество
+            dd #{purchase.quantity}
+            dt Сумма
+            dd #{purchase.total}
+            dt Магазин
+            dd: a(href='/store/view/#{card.store._id}') #{card.store.title}
+            dt Карта
+            dd: a(href='/card/view/#{card._id}') #{card.cc}
+            dt Клиент
+            dd: a(href='/user/view/#{card.user._id}') #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
+
+        .panel-footer
+          a.btn.btn-link(href='/purchase/edit/#{purchase._id}'): i.fa.fa-wrench
+            | &nbsp;Изменить
+          | &nbsp;
+          button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalRemove', data-id='#{purchase._id}', data-title='#{purchase.title}', data-type='purchase'): i.fa.fa-times
+            | &nbsp;Удалить
+
+block body_child
+  #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+          h4#modalRemoveLabel.modal-title Удалить
+        .modal-body#modalRemoveTitle
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
+          button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить

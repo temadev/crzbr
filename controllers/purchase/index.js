@@ -111,15 +111,48 @@ module.exports = function (router) {
       .populate('user', 'firstname lastname middlename phone')
       .populate('store', 'title')
       .exec(function (err, cards) {
-        console.log(user);
         res.render('purchase/create_user', {cards: cards, client: user});
       });
 
   });
 
-  router.post('/remove', function (req, res) {
+  router.get('/view/:id', auth.isAuthenticated(), function (req, res) {
+    var id = req.params.id;
+    Purchase.findById(id).exec(function (err, purchase) {
+      Card
+        .findById(purchase.card)
+        .populate('store user', 'title lastname firstname middlename')
+        .exec(function (err, card) {
+          res.render('purchase/view', {purchase: purchase, card: card});
+        });
+    });
+  });
 
-    console.log(req.body);
+  router.get('/edit/:id', auth.isAuthenticated(), function (req, res) {
+    var id = req.params.id;
+    Purchase.findById(id).exec(function (err, purchase) {
+      res.render('purchase/edit', {purchase: purchase});
+    });
+  });
+
+  router.post('/edit', auth.isAuthenticated(), function (req, res) {
+
+    var id = req.body.id
+      , purchase = {
+        title: req.body.title,
+        price: req.body.price,
+        quantity: req.body.quantity,
+        total: req.body.total
+      };
+
+    Purchase.findByIdAndUpdate(id, {$set: purchase}, function (err, purchase) {
+      console.log(arguments);
+      res.redirect('/purchase/view/' + id);
+    });
+
+  });
+
+  router.post('/remove', function (req, res) {
 
     Purchase.findById(req.body.id, function (err, purchase) {
       if (purchase) {
