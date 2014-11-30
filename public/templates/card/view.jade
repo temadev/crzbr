@@ -1,100 +1,91 @@
 extends ../layouts/main
 block active-item
-    - nav.menu['Магазины']['active'] = 1
+  - nav.menu['Карты']['active'] = 1
 block content
-    - function addZ(n){return n<10? '0'+n:''+n;}
-    - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()}
-    h3 #{card.cc}
-        br
-        small #{card.store.title}
-    // START row
-    .row
-        .col-lg-8
-            .panel.panel-default
-                .panel-heading
-                    | Реквизиты
-                .panel-body
-                    if qr
-                        img.pull-right(src='#{qr}', title='#{card.cc}', style='width:100px')
-                    dl.dl-horizontal
-                        if card.cc
-                            dt Номер карты
-                            dd #{card.cc}
-                        if card.user
-                            dt ФИО клиента
-                            dd #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
-                            dt Телефон
-                            dd #{card.user.phone}
-                            dt Email
-                            dd #{card.user.email}
-                .panel-footer
-                    a.btn.btn-link(href='/card/edit/#{card._id}')
-                        i.fa.fa-wrench
-                        | &nbsp;Изменить
-                    | &nbsp;
-                    a.btn.btn-link(href='/card/view/#{card._id}/print', target='_blank')
-                        i.fa.fa-print
-                        | &nbsp;Напечатать
-                    | &nbsp;
-                    button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalCardRemove', data-id='#{card._id}', data-title='#{card.cc}', data-type='card')
-                        i.fa.fa-times
-                        | &nbsp;Удалить карту
-    // END row
-    // START DATATABLE 2
-    .row
-        .col-lg-12
-            .panel.panel-default
-                .panel-heading
-                    | Список покупок
-                    a.btn.btn-success.pull-right.btn-xs.btn-labeled(href='/purchase/create/card/#{card._id}')
-                        .btn-label: i.fa.fa-plus-circle
-                        | Добавить покупку
-                .panel-body#purchases
+  - function addZ(n){return n<10? '0'+n:''+n;}
+  - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()}
+  h3 #{card.cc}
+    br
+    small #{card.store.title}
 
-                    table#datatable3.table.table-striped.table-hover
-                        thead
-                            tr
-                                th #
-                                th Описание покупки
-                                th Дата
-                                th Цена
-                                th Кол-во
-                                th Сумма
-                                th Действие
-                        tbody
-                            each purchase, index in purchases
-                                tr(id='#{purchase._id}')
-                                    td #{index+1}
-                                    td
-                                        a(href='/purchase/view/#{purchase._id}') #{purchase.title}
-                                    td(data-order="#{purchase.date}") #{showTime(purchase.date)}
-                                    td #{purchase.price}
-                                    td #{purchase.quantity}
-                                    td #{purchase.total}
-                                    td
-                                        a.btn.btn-primary.btn-xs(href='/purchase/view/#{purchase._id}')
-                                            i.fa.fa-search
-                                        | &nbsp;
-                                        a.btn.btn-warning.btn-xs(href='/purchase/edit/#{purchase._id}')
-                                            i.fa.fa-wrench
-                                        | &nbsp;
-                                        button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemovePurchase', data-id='#{purchase._id}', data-title='#{purchase.title}', data-type='purchase', data-back='/card/view/#{card._id}')
-                                            i.fa.fa-times
-                            tfoot
-                                tr
-                                    th
-                                    th
-                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Описание покупки')
-                                    th
-                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Дата')
-                                    th
-                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
-                                    th
-                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Кол-во')
-                                    th
-                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Сумма')
-                                    th
-    // END DATATABLE 2
+  .row
+    .col-lg-8
+      .panel.panel-default
+        .panel-heading
+          | Реквизиты
+        .panel-body
+          if qr
+            img.pull-right(src='#{qr}', title='#{card.cc}', style='width:100px')
+          dl.dl-horizontal
+            if card.cc
+              dt Номер карты
+              dd #{card.cc}
+            if card.user
+              dt ФИО клиента
+              dd #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
+              dt Телефон
+              dd #{card.user.phone}
+              dt Email
+              dd #{card.user.email}
+        .panel-footer
+          a.btn.btn-link(href='/card/edit/#{card._id}')
+            i.fa.fa-wrench
+            | &nbsp;Изменить
+          | &nbsp;
+          a.btn.btn-link(href='/card/view/#{card._id}/print', target='_blank')
+            i.fa.fa-print
+            | &nbsp;Напечатать
+          | &nbsp;
+          button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalCardRemove', data-id='#{card._id}', data-title='#{card.cc}', data-type='card')
+            i.fa.fa-times
+            | &nbsp;Удалить карту
+
+  .row
+    .col-lg-12
+      .panel.panel-default
+        .panel-heading
+          | Список покупок
+          a.btn.btn-success.pull-right.btn-xs.btn-labeled(href='/purchase/create/card/#{card._id}')
+            .btn-label: i.fa.fa-plus-circle
+            | Добавить покупку
+        .panel-body#purchases
+
+          table#datatable3.table.table-striped.table-hover
+            thead
+              tr
+                th #
+                th Описание покупки
+                th Дата
+                th Цена
+                th Кол-во
+                th Сумма
+                th.action
+            tbody
+              each purchase, index in purchases
+                tr(id='#{purchase._id}')
+                  td #{index + 1}
+                  td
+                    a(href='/purchase/view/#{purchase._id}') #{purchase.title}
+                  td(data-order="#{purchase.date}") #{showTime(purchase.date)}
+                  td #{purchase.price}
+                  td #{purchase.quantity}
+                  td #{purchase.total}
+                  td
+                    a.btn.btn-warning.btn-xs(href='/purchase/edit/#{purchase._id}')
+                      i.fa.fa-wrench
+                    | &nbsp;
+                    button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemovePurchase', data-id='#{purchase._id}', data-title='#{purchase.title}', data-type='purchase', data-back='/card/view/#{card._id}')
+                      i.fa.fa-times
+              tfoot
+                tr
+                  th
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Описание покупки')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Дата')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Кол-во')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Сумма')
+                  th
+
 block body_child
   #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
     .modal-dialog

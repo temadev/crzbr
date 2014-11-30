@@ -1,45 +1,43 @@
 extends ../layouts/main
 block active-item
-    - nav.menu['Прайслисты']['active'] = 1
+  - nav.menu['Прайслисты']['active'] = 1
 block content
-    a(href='/price/create').btn.btn-labeled.btn-primary.pull-right
-        span.btn-label
-            i.fa.fa-plus-circle
-        | Новый товар/услуга
-    h3 Прайслист
-        br
-        small Список моих товаров/услуг
-    // START DATATABLE 2
-    .row
-        .col-lg-12
-            .panel.panel-default
-                .panel-body
-                    table#datatable2.table.table-striped.table-hover
-                        thead
-                            tr
-                                th Название
-                                th Цена
-                                th Магазин
-                                th Действия
-                        tbody
-                            each price in prices
-                                tr(id='#{price._id}')
-                                    td: a(href='/price/view/#{price._id}') #{price.title}
-                                    td #{price.price}
-                                    td: a(href='/store/view/#{price.store._id}') #{price.store.title}
-                                    td
-                                        a.btn.btn-primary.btn-xs(href='/price/view/#{price._id}'): i.fa.fa-search
-                                        | &nbsp;
-                                        a.btn.btn-warning.btn-xs(href='/price/edit/#{price._id}'): i.fa.fa-wrench
-                                        | &nbsp;
-                                        button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{price._id}', data-title='#{price.title}', data-type='price'): i.fa.fa-times
-                            tfoot
-                                tr
-                                    th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Название')
-                                    th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
-                                    th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Магазин')
-                                    th
-    // END DATATABLE 2
+  a(href='/price/create').btn.btn-labeled.btn-primary.pull-right
+    span.btn-label
+      i.fa.fa-plus-circle
+    | Новый товар/услуга
+  h3 Прайслист
+    br
+    small Список моих товаров/услуг
+
+  .row
+    .col-lg-12
+      .panel.panel-default
+        .panel-body
+          table#datatable2.table.table-striped.table-hover
+            thead
+              tr
+                th Название
+                th Цена
+                th Магазин
+                th.action
+            tbody
+              each price in prices
+                tr(id='#{price._id}')
+                  td: a(href='/price/view/#{price._id}') #{price.title}
+                  td #{price.price}
+                  td: a(href='/store/view/#{price.store._id}') #{price.store.title}
+                  td
+                    a.btn.btn-warning.btn-xs(href='/price/edit/#{price._id}'): i.fa.fa-wrench
+                    | &nbsp;
+                    button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{price._id}', data-title='#{price.title}', data-type='price'): i.fa.fa-times
+              tfoot
+                tr
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Название')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Магазин')
+                  th
+
 block body_child
   #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
     .modal-dialog

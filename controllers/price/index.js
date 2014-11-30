@@ -26,7 +26,12 @@ module.exports = function (router) {
 
   router.get('/create', auth.isAuthenticated(), function (req, res) {
 
-    Store.find({}, function (err, stores) {
+    var query = {};
+
+    if (req.user && req.user.role !== 'admin')
+      query = {user: req.user};
+
+    Store.find(query, function (err, stores) {
       res.render('price/create', {stores: stores});
     });
 
@@ -56,11 +61,15 @@ module.exports = function (router) {
 
   router.get('/edit/:id', auth.isAuthenticated(), function (req, res) {
 
-    var id = req.params.id;
+    var id = req.params.id
+      , query = {};
+
+    if (req.user && req.user.role !== 'admin')
+      query = {user: req.user};
 
     Price.findById(id)
       .exec(function (err, price) {
-        Store.find({}, function (err, stores) {
+        Store.find(query, function (err, stores) {
           res.render('price/edit', { price: price, stores: stores });
         });
 
@@ -74,6 +83,17 @@ module.exports = function (router) {
 
     Price.findByIdAndUpdate(body.id, { $set: body }, function (err, price) {
       res.redirect('/price/view/' + body.id);
+    });
+
+  });
+
+  router.post('/remove', function (req, res) {
+
+    Price.findById(req.body.id, function (err, price) {
+      if (price) {
+        price.remove();
+      }
+      res.send(200);
     });
 
   });

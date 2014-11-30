@@ -1,47 +1,37 @@
 extends ../layouts/main
 block active-item
-    - nav.menu['Покупки']['active'] = 1
+  - nav.menu['Покупки']['active'] = 1
 block content
-    h3 Новая покупка
-    .row
-        .col-md-12
-            form.form-horizontal#purchaseForm(role='form', method='post', action='/purchase/create', data-parsley-validate='', novalidate='')
-                // START panel
-                .panel.panel-default
-                    .panel-heading Основная информация
-                    .panel-body
-                        fieldset
-                            .form-group
-                                label.col-sm-2.control-label Магазин
-                                .col-sm-6
-                                    select.form-control#storeSelect(name='store')
-                                        each store in stores
-                                            option(value='#{store._id}')= store.title
-                        fieldset
-                            .form-group
-                                label.col-sm-2.control-label(for="card") Телефон покупателя
-                                .col-sm-10
-                                    input.form-control#autocomplete-cards(type="text", name="card")
-                                    input#selction-cards(type="hidden", name="card_id")
-                        fieldset
-                            .form-group
-                                label.col-sm-2.control-label(for="purchase") Название покупки
-                                .col-sm-10
-                                    input.form-control#autocomplete-purchases(type="text", name="purchase")
-                        fieldset
-                            .form-group
-                                label.col-sm-2.control-label Цена
-                                .col-sm-6
-                                    input#selction-prices.form-control(type='number', name='price', required='required')
-                        fieldset
-                            .form-group
-                                label.col-sm-2.control-label Количество
-                                .col-sm-6
-                                    input.form-control(type='number', name='quantity', required='required', value='1')
-                    .panel-footer
-                        button.btn.btn-lg.btn-info(type='submit') Сохранить
-                        | &nbsp;
-                        a.btn.btn-lg.btn-default(href="/purchase") Отменить
-                        input(type="hidden", name="_csrf", value="#{_csrf}")
-                // END panel
-    // END row
+  h3 Новая покупка
+  .row
+    .col-md-12
+      form.form-horizontal#purchaseForm(role='form', method='post', action='/purchase/create')
+        .panel.panel-default
+          .panel-heading Основная информация
+          .panel-body
+            fieldset
+              .form-group
+                label.col-sm-2.control-label(for="card") Номер карты
+                .col-sm-8
+                  input.form-control#autocomplete-cards(type="text", name="card", required='required', placeholder='Введите телефон покупателя')
+                  input#selction-cards(type="hidden", name="card_id")
+            fieldset
+              .form-group
+                label.col-sm-2.control-label(for="purchase") Название покупки
+                .col-sm-8
+                  input.form-control#autocomplete-purchases(type="text", name="purchase", required='required')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Цена
+                .col-sm-2
+                  input#selction-prices.form-control(type='number', name='price', required='required')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Количество
+                .col-sm-2
+                  input.form-control(type='number', name='quantity', required='required', value='1')
+          .panel-footer
+            button.btn.btn-lg.btn-info(type='submit') Сохранить
+            | &nbsp;
+            a.btn.btn-lg.btn-default(href="/purchase") Отменить
+            input(type="hidden", name="_csrf", value="#{_csrf}")

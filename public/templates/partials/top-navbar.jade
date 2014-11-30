@@ -1,28 +1,10 @@
-// START Top Navbar
 nav.navbar.navbar-default.navbar-top.navbar-fixed-top(role='navigation')
-    // START navbar header
-    .navbar-header
-        a.navbar-brand(href='/')
-            .brand-logo CrazyBuyer
-            .brand-logo-collapsed CB
-    // END navbar header
-    // START Nav wrapper
-    .nav-wrapper
-        // START Left navbar
-        ul.nav.navbar-nav
-            li
-                a(href='#', data-toggle="aside")
-                    em.fa.fa-align-left
-            li
-                a(href='#', data-toggle="navbar-search")
-                    em.fa.fa-search
-        // END Left navbar
-    // END Nav wrapper
-    // START Search form
-    form.navbar-form(role='search')
-        .form-group.has-feedback
-            input.form-control(type='text', placeholder='Введите поисковый запрос и нажмите Enter...')
-            .fa.fa-times.form-control-feedback(data-toggle="navbar-search-dismiss")
-        button.hidden.btn.btn-default(type='submit') Поиск
-    // END Search form
-// END Top Navbar
+  .navbar-header
+    a.navbar-brand(href='/')
+      .brand-logo CrazyBuyer
+      .brand-logo-collapsed CB
+  .nav-wrapper
+    ul.nav.navbar-nav
+      li
+        a(href='#', data-toggle="aside")
+          em.fa.fa-align-left

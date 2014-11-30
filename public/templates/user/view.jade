@@ -62,10 +62,7 @@ block content
                       span.fa.fa-check
                   td: a(href='/card/view/#{card._id}') #{card.cc}
                   td: a(href='/store/view/#{card.store._id}') #{card.store.title}
-                  td
-                    a.btn.btn-warning.btn-xs(href='/card/edit/#{card._id}'): i.fa.fa-wrench
-                    | &nbsp;
-                    button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{card._id}', data-title='#{card.cc}', data-type='card', data-back='/user/view/#{client._id}'): i.fa.fa-times
+                  td: button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{card._id}', data-title='#{card.cc}', data-type='card', data-back='/user/view/#{client._id}'): i.fa.fa-times
               tfoot
                 tr
                   th

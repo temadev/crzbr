@@ -2,8 +2,6 @@
 
 
 var auth = require('../../lib/auth')
-  , multipart = require('connect-multiparty')
-  , multipartMiddleware = multipart()
   , async = require('async')
   , Store = require('../../models/store')
   , Card = require('../../models/card')

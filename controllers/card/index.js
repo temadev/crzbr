@@ -20,33 +20,51 @@ module.exports = function (router) {
 
   router.get('/', auth.isAuthenticated(), function (req, res) {
 
-    Card.find({})
-      .populate('user store', 'firstname lastname middlename email phone title')
-      .exec(function (err, cards) {
+    var query = {};
+
+    if (req.user && req.user.role !== 'admin')
+      query = {user: req.user};
+
+    Store.find(query)
+      .exec(function (err, stores) {
         if (err) {
           throw err;
         }
-
         var allCards = [];
-        async.each(cards, function (cardData, callback) {
+        async.each(stores, function (store, cb) {
+          Card.find({store: store})
+            .populate('user store', 'firstname lastname middlename email phone title')
+            .exec(function (err, cards) {
+              if (err) {
+                throw err;
+              }
+              async.each(cards, function (cardData, callback) {
+                Purchase.count({card: cardData})
+                  .exec(function (err, purchases) {
+                    cardData.purchases = purchases;
+                    allCards.push(cardData);
+                    callback();
+                  });
+              }, function () {
+                cb();
+              });
 
-          Purchase.count({card: cardData})
-            .exec(function (err, purchases) {
-              cardData.purchases = purchases;
-              allCards.push(cardData);
-              callback();
             });
         }, function () {
           res.render('card/index', {cards: allCards});
         });
-
       });
 
   });
 
   router.get('/create', auth.isAuthenticated(), function (req, res) {
 
-    Store.find({}, function (err, stores) {
+    var query = {};
+
+    if (req.user && req.user.role !== 'admin')
+      query = {user: req.user};
+
+    Store.find(query, function (err, stores) {
       res.render('card/create', {stores: stores});
     });
 
@@ -56,6 +74,9 @@ module.exports = function (router) {
 
     var count = req.body.count
       , user = req.body.user_id;
+
+    if (!count)
+      count = 1;
 
     for (var i = 0; i < count; i++) {
       var newCard = new Card({
@@ -75,10 +96,13 @@ module.exports = function (router) {
 
   router.get('/create/:user', auth.isAuthenticated(), function (req, res) {
 
-    var user = req.params.user;
-    console.log(user);
+    var user = req.params.user
+      , query = {};
 
-    Store.find({}, function (err, stores) {
+    if (req.user && req.user.role !== 'admin')
+      query = {user: req.user};
+
+    Store.find(query, function (err, stores) {
       res.render('card/user', {stores: stores, user_id: user});
     });
 
@@ -202,8 +226,8 @@ function drawCard(id, cb) {
 
   var cards;
 
-  if( typeof id === 'string' ) {
-    cards = [ id ];
+  if (typeof id === 'string') {
+    cards = [id];
   } else {
     cards = id;
   }
@@ -253,11 +277,11 @@ function drawCard(id, cb) {
       }
 
       if (row > 0) {
-        top = 163*row;
-        text1_top = 10 + 163*row;
-        text2_top = 20 + 163*row;
-        qr_top = 65 + 163*row;
-        img_top = 76 + 163*row;
+        top = 163 * row;
+        text1_top = 10 + 163 * row;
+        text2_top = 20 + 163 * row;
+        qr_top = 65 + 163 * row;
+        img_top = 76 + 163 * row;
       }
 
       if (i % 2 === 1) {

@@ -28,7 +28,7 @@ block content
                 th E-mail
                 th Магазин
                 th Покупки
-                th Действия
+                th.action
             tbody
               each card in cards
                 tr(id='#{card._id}')
@@ -40,7 +40,7 @@ block content
                     a(href='/card/view/#{card._id}') #{card.cc}
                   td
                     if (card.user)
-                        | #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
+                        a(href='/user/view/#{card.user._id}') #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
                   td
                     if (card.user)
                         | #{card.user.phone}
@@ -50,31 +50,21 @@ block content
                   td: a(href='/store/view/#{card.store._id}') #{card.store.title}
                   td #{card.purchases}
                   td
-                    a.btn.btn-primary.btn-xs(href='/card/view/#{card._id}')
-                      i.fa.fa-search
-                    | &nbsp;
-                    a.btn.btn-warning.btn-xs(href='/card/edit/#{card._id}')
-                      i.fa.fa-wrench
-                    | &nbsp;
+                    if (!card.user)
+                      a.btn.btn-warning.btn-xs(href='/card/edit/#{card._id}')
+                        i.fa.fa-wrench
+                      | &nbsp;
                     button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{card._id}', data-title='#{card.cc}', data-type='card')
                       i.fa.fa-times
               tfoot
                 tr
-                  th
-                    a#printCards.btn.btn-warning.btn-sm(href='#', data-csrf='#{_csrf}')
-                      i.fa.fa-print
-                  th
-                    input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Номер карты')
-                  th
-                    input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Владелец')
-                  th
-                    input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Телефон')
-                  th
-                    input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='E-mail')
-                  th
-                    input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Магазин')
-                  th
-                    input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Покупки')
+                  th: a#printCards.btn.btn-info.btn-sm(href='#', data-csrf='#{_csrf}'): i.fa.fa-print
+                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Номер карты')
+                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Владелец')
+                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Телефон')
+                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='E-mail')
+                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Магазин')
+                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Покупки')
                   th
 
   // END DATATABLE 2

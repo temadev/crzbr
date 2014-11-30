@@ -1,86 +1,73 @@
 extends ../layouts/main
 block active-item
-    - nav.menu['Покупки']['active'] = 1
+  - nav.menu['Покупки']['active'] = 1
 block content
-    - function addZ(n){return n<10? '0'+n:''+n;}
-    - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+addZ(date.getHours())+':'+addZ(date.getMinutes())}
-    a(href='/purchase/create').btn.btn-labeled.btn-primary.pull-right
-        span.btn-label
-            i.fa.fa-plus-circle
-        | Добавить покупку
-    h3 Покупки
-        br
-        small Список всех покупок
-    // START DATATABLE 2
-    .row
-        .col-lg-12
-            form.form-inline(role="form", action="/purchase")
-                .form-group.datetimepicker
-                    label.control-label(for="purchaseDate1") Дата начала
-                    input.form-control#dateStart(type="text", name="dateStart", data-date-format="DD.MM.YYYY", value="#{dateStart?dateStart:''}")
-                |&nbsp;
-                .form-group.datetimepicker
-                    label.control-label(for="purchaseDate2") Дата конца
-                    input.form-control#dateEnd(type="text", name="dateEnd", data-date-format="DD.MM.YYYY", value="#{dateEnd?dateEnd:''}")
-                |&nbsp;
-                button.btn.btn-success(type="submit") Показать
-            br
-            .panel.panel-default
-                .panel-body#purchases
-                    table#purchasesTable.table.table-striped.table-hover
-                        thead
-                            tr
-                                th Дата
-                                th Описание покупки
-                                th Клиент
-                                th Цена
-                                th Кол-во
-                                th Сумма
-                                th Магазин
-                                th Действие
-                        tbody
-                            each purchase in purchases
-                                tr(id='#{purchase._id}')
-                                    td(data-order="#{purchase.date.getTime()}") #{showTime(purchase.date)}
-                                    td
-                                        a(href='/purchase/view/#{purchase._id}') #{purchase.title}
-                                    td
-                                        if(purchase.card.user)
-                                            a(href='/user/view/#{purchase.card.user._id}') #{purchase.card.user.lastname} #{purchase.card.user.firstname} #{purchase.card.user.middlename}
-                                        else
-                                            a(href='/card/view/#{purchase.card._id}')  #{purchase.card.cc}
-                                    td #{purchase.price}
-                                    td #{purchase.quantity}
-                                    td #{purchase.total}
-                                    td: a(href='/store/view/#{purchase.card.store._id}') #{purchase.card.store.title}
-                                    td
-                                        a.btn.btn-primary.btn-xs(href='/purchase/view/#{purchase._id}')
-                                            i.fa.fa-search
-                                        | &nbsp;
-                                        a.btn.btn-warning.btn-xs(href='/purchase/edit/#{purchase._id}')
-                                            i.fa.fa-wrench
-                                        | &nbsp;
-                                        button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{purchase._id}', data-title='#{purchase.title}', data-type='purchase')
-                                            i.fa.fa-times
-                            tfoot
-                                tr
-                                    th
-                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Дата')
-                                    th
-                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Описание покупки')
-                                    th
-                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Клиент')
-                                    th
-                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
-                                    th
-                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Кол-во')
-                                    th
-                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Сумма')
-                                    th
-                                        input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Магазин')
-                                    th
+  - function addZ(n){return n<10? '0'+n:''+n;}
+  - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+addZ(date.getHours())+':'+addZ(date.getMinutes())}
+  - function showTimeYear(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()}
+  a(href='/purchase/create').btn.btn-labeled.btn-primary.pull-right
+    span.btn-label
+      i.fa.fa-plus-circle
+    | Добавить покупку
+  h3 Покупки
+    br
+    small Список всех покупок
 
-    // END DATATABLE 2
+  .row
+    .col-lg-12
+      form.form-inline(role="form", action="/purchase")
+        .form-group.datetimepicker
+          label.control-label(for="purchaseDate1") Показывать покупки с &nbsp;
+          input.form-control#dateStart(type="text", name="dateStart", data-date-format="DD.MM.YYYY", value="#{dateStart ? showTimeYear(dateStart) : ''}")
+        | &nbsp;
+        .form-group.datetimepicker
+          label.control-label(for="purchaseDate2") &nbsp;по &nbsp;
+          input.form-control#dateEnd(type="text", name="dateEnd", data-date-format="DD.MM.YYYY", value="#{dateEnd ? showTimeYear(dateEnd) : ''}")
+        | &nbsp;
+        button.btn.btn-success(type="submit") Применить
+      br
+      .panel.panel-default
+        .panel-body#purchases
+          table#purchasesTable.table.table-striped.table-hover
+            thead
+              tr
+                th Дата
+                th Описание покупки
+                th Клиент
+                th Цена
+                th Кол-во
+                th Сумма
+                th Магазин
+                th.action
+            tbody
+              each purchase in purchases
+                tr(id='#{purchase._id}')
+                  td(data-order="#{purchase.date.getTime()}") #{showTime(purchase.date)}
+                  td: a(href='/purchase/view/#{purchase._id}') #{purchase.title}
+                  td
+                    if(purchase.card.user)
+                      a(href='/user/view/#{purchase.card.user._id}') #{purchase.card.user.lastname} #{purchase.card.user.firstname} #{purchase.card.user.middlename}
+                    else
+                      a(href='/card/view/#{purchase.card._id}')  #{purchase.card.cc}
+                  td #{purchase.price}
+                  td #{purchase.quantity}
+                  td #{purchase.total}
+                  td: a(href='/store/view/#{purchase.card.store._id}') #{purchase.card.store.title}
+                  td
+                    a.btn.btn-warning.btn-xs(href='/purchase/edit/#{purchase._id}'): i.fa.fa-wrench
+                    | &nbsp;
+                    button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{purchase._id}', data-title='#{purchase.title}', data-type='purchase'): i.fa.fa-times
+              tfoot
+                tr
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Дата')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Описание покупки')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Клиент')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Кол-во')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Сумма')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Магазин')
+                  th
+
 block body_child
   #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
     .modal-dialog
