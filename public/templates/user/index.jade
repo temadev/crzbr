@@ -1,6 +1,6 @@
 extends ../layouts/main
 block active-item
-  - nav.menu['Клиенты']['active'] = 1
+  - nav['Клиенты']['active'] = 1
 block content
   - function addZ(n){return n<10? '0'+n:''+n;}
   - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()}

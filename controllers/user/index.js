@@ -20,13 +20,18 @@ module.exports = function (router) {
 
   router.get('/', auth.isAuthenticated(), function (req, res) {
 
-    User.find({})
+    var query = {};
+
+    if (req.user && req.user.role !== 'admin')
+      query = {owner: req.user};
+
+    User.find(query)
       .populate('owner')
       .exec(function (err, users) {
         if (err) {
           throw err;
         }
-        res.render('user/index', { users: users });
+        res.render('user/index', {users: users});
       });
 
   });
@@ -95,14 +100,14 @@ module.exports = function (router) {
           if (err) {
             throw err;
           }
-          res.send({ id: user._id, title: user.lastname + ' ' + user.firstname, phone: user.phone });
+          res.send({id: user._id, title: user.lastname + ' ' + user.firstname, phone: user.phone});
 
         });
 
         return;
       }
       if (user) {
-        res.send({ id: user._id, title: user.lastname + ' ' + user.firstname, phone: user.phone });
+        res.send({id: user._id, title: user.lastname + ' ' + user.firstname, phone: user.phone});
       }
     });
 
@@ -130,6 +135,12 @@ module.exports = function (router) {
             }
             callback(null, card);
           });
+      },
+      stores: function (callback) {
+        Store.count({user: req.user._id})
+          .exec(function (err, count) {
+            callback(null, count);
+          });
       }
     }, function (err, results) {
       if (err) {
@@ -139,10 +150,10 @@ module.exports = function (router) {
       var allPurchases = [];
       async.each(results.cards, function (cardData, callback) {
 
-        Purchase.find({ card: cardData })
+        Purchase.find({card: cardData})
           .populate('card', 'store')
           .exec(function (err, purchases) {
-            var opts = { path: 'card.store', model: 'Store', select: 'title' };
+            var opts = {path: 'card.store', model: 'Store', select: 'title'};
             async.each(purchases, function (purchaseData, callback) {
 
               Purchase.populate(purchaseData, opts, function (err, purchaseData) {
@@ -154,8 +165,7 @@ module.exports = function (router) {
             });
           });
       }, function () {
-        console.log(results.user);
-        res.render('user/view', { client: results.user, cards: results.cards, purchases: allPurchases });
+        res.render('user/view', {client: results.user, cards: results.cards, purchases: allPurchases, stores: results.stores});
       });
     });
 
@@ -165,31 +175,49 @@ module.exports = function (router) {
 
     var id = req.params.id;
 
-    User.findOne({ _id: id })
+    User.findOne({_id: id})
       .exec(function (err, user) {
         console.log(user);
-        res.render('user/edit', { client: user });
+        res.render('user/edit', {client: user});
       });
 
   });
 
   router.post('/edit', function (req, res) {
 
-    var client = req.body;
+    var id = req.body.id
+      , client = {
+        email: req.body.email,
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        middlename: req.body.middlename,
+        phone: req.body.phone
+      };
+
     client.updated = Date.now();
 
-    if (req.files && req.files.photo) {
-      User.findById(client.id, function (err, user) {
+    if (req.body.password && req.body.password !== '') {
+      User.findById(id).exec(function (err, user) {
+        user.password = req.body.password;
+        user.save();
+      })
+    }
+
+    if (req.body.role)
+      client.role = req.body.role;
+
+    if (req.files && req.files.photo && req.files.photo.size > 0) {
+      User.findById(id, function (err, user) {
         uploadS3(req.files.photo, user, function (url) {
           client.photo = url;
-          User.findByIdAndUpdate(client.id, { $set: client }, function (err, user) {
-            res.redirect('/user/view/' + client.id);
+          User.findByIdAndUpdate(id, {$set: client}, function (err, user) {
+            res.redirect('/user/view/' + id);
           });
         });
       });
     } else {
-      User.findByIdAndUpdate(client.id, { $set: client }, function (err, user) {
-        res.redirect('/user/view/' + client.id);
+      User.findByIdAndUpdate(id, {$set: client}, function (err, user) {
+        res.redirect('/user/view/' + id);
       });
     }
 
@@ -199,7 +227,7 @@ module.exports = function (router) {
 
     User.findById(req.body.id, function (err, user) {
 
-      Card.find({user:user}).exec(function (err, cards) {
+      Card.find({user: user}).exec(function (err, cards) {
         async.each(cards, function (card, cb) {
           Card.findById(card._id, function (err, c) {
             Purchase.find({card: c}).exec(function (err, purchases) {

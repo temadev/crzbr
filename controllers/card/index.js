@@ -25,35 +25,57 @@ module.exports = function (router) {
     if (req.user && req.user.role !== 'admin')
       query = {user: req.user};
 
-    Store.find(query)
-      .exec(function (err, stores) {
-        if (err) {
-          throw err;
-        }
-        var allCards = [];
-        async.each(stores, function (store, cb) {
-          Card.find({store: store})
-            .populate('user store', 'firstname lastname middlename email phone title')
-            .exec(function (err, cards) {
-              if (err) {
-                throw err;
-              }
-              async.each(cards, function (cardData, callback) {
-                Purchase.count({card: cardData})
-                  .exec(function (err, purchases) {
-                    cardData.purchases = purchases;
-                    allCards.push(cardData);
-                    callback();
-                  });
-              }, function () {
-                cb();
-              });
+    var allCards = [];
 
-            });
-        }, function () {
-          res.render('card/index', {cards: allCards});
+    if (req.user.role === 'user') {
+      Card.find({user: req.user._id})
+        .populate('user store', 'firstname lastname middlename email phone title')
+        .exec(function (err, cards) {
+          if (err) {
+            throw err;
+          }
+          async.each(cards, function (cardData, callback) {
+            Purchase.count({card: cardData})
+              .exec(function (err, purchases) {
+                cardData.purchases = purchases;
+                allCards.push(cardData);
+                callback();
+              });
+          }, function () {
+            res.render('card/index', {cards: allCards});
+          });
         });
-      });
+    } else {
+      Store.find(query)
+        .exec(function (err, stores) {
+          if (err) {
+            throw err;
+          }
+
+          async.each(stores, function (store, cb) {
+            Card.find({store: store})
+              .populate('user store', 'firstname lastname middlename email phone title')
+              .exec(function (err, cards) {
+                if (err) {
+                  throw err;
+                }
+                async.each(cards, function (cardData, callback) {
+                  Purchase.count({card: cardData})
+                    .exec(function (err, purchases) {
+                      cardData.purchases = purchases;
+                      allCards.push(cardData);
+                      callback();
+                    });
+                }, function () {
+                  cb();
+                });
+
+              });
+          }, function () {
+            res.render('card/index', {cards: allCards});
+          });
+        });
+    }
 
   });
 
@@ -82,7 +104,8 @@ module.exports = function (router) {
       var newCard = new Card({
         user: user ? user : null,
         store: req.body.store,
-        cc: cc.generate({parts: 4})
+        cc: cc.generate({parts: 4}),
+        author: req.user._id
       });
 
       newCard.save();

@@ -17,6 +17,7 @@ var cardModel = function () {
       type: Schema.Types.ObjectId,
       ref: 'User'
     },
+    author: { type: Schema.Types.ObjectId, ref: 'User' },
     created: Date
   });
 

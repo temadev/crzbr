@@ -1,15 +1,13 @@
 mixin build-menu-items(items)
-    each val, key in items
-        li(class=val.active?'active':'')
-            - has_submenu = !!val.S
-            a(href=val.href, title=key, data-toggle=(has_submenu?"collapse-next":""), class=(has_submenu?"has-submenu":"no-submenu"))
-                if ( val.icon )
-                    em(class=val.icon)
-                if ( val.alert )
-                    .label.label-success.pull-right= val.alert
-                span.item-text= key
-            if (has_submenu)
-                // START SubMenu item
-                ul(class="nav collapse " + (val.active?'in':''))
-                    +build-menu-items(val.S)
-                // END SubMenu item
+  each val, key in items
+    li(class=val.active ? 'active' : '')
+      - has_submenu = !!val.S
+      a(href=val.href, title=key, data-toggle=(has_submenu ? "collapse-next" : ""), class=(has_submenu ? "has-submenu" : "no-submenu"))
+        if ( val.icon )
+          em(class=val.icon)
+        if ( val.alert )
+          .label.label-success.pull-right= val.alert
+        span.item-text= key
+      if (has_submenu)
+        ul(class="nav collapse " + (val.active ? 'in' : ''))
+          +build-menu-items(val.S)

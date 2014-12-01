@@ -1,34 +1,35 @@
 extends ../layouts/main
 block active-item
-    - nav.menu['Прайслисты']['active'] = 1
+  - nav['Прайслисты']['active'] = 1
 block content
-    - function addZ(n){return n<10? '0'+n:''+n;}
-    - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()}
-    h3 #{price.title}
-        br
-        small #{price.store.title}
-    // START row
-    .row
-        .col-lg-8
-            .panel.panel-default
-                .panel-body
-                    dl.dl-horizontal
-                        dt Название
-                        dd #{price.title}
-                        dt Цена
-                        dd #{price.price}
-                        dt Магазин
-                        dd: a(href='/price/view/#{price.store._id}') #{price.store.title}
-                        if price.description
-                            dt Описание товара/услуги
-                            dd #{price.description}
-                .panel-footer
-                    a.btn.btn-link(href='/price/edit/#{price._id}'): i.fa.fa-wrench
-                        | &nbsp;Изменить
-                    | &nbsp;
-                    button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalRemove', data-id='#{price._id}', data-title='#{price.title}', data-type='price'): i.fa.fa-times
-                        | &nbsp;Удалить
-    // END row
+  - function addZ(n){return n<10? '0'+n:''+n;}
+  - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()}
+  h3 #{price.title}
+    br
+    small #{price.store.title}
+
+  .row
+    .col-lg-8
+      .panel.panel-default
+        .panel-heading Товар/услуга
+        .panel-body
+          dl.dl-horizontal
+            dt Название
+            dd #{price.title}
+            dt Цена
+            dd #{price.price}
+            dt Магазин
+            dd: a(href='/price/view/#{price.store._id}') #{price.store.title}
+            if price.description
+              dt Описание
+              dd #{price.description}
+        .panel-footer
+          a.btn.btn-link(href='/price/edit/#{price._id}'): i.fa.fa-wrench
+            | &nbsp;Изменить
+          | &nbsp;
+          button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalRemove', data-id='#{price._id}', data-title='#{price.title}', data-type='price'): i.fa.fa-times
+            | &nbsp;Удалить
+
 block body_child
   #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
     .modal-dialog

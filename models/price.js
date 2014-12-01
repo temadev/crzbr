@@ -11,6 +11,7 @@ var priceModel = function () {
       ref: 'Store',
       required: true
     },
+    author: { type: Schema.Types.ObjectId, ref: 'User' },
     title: String,
     description: String,
     price: Number,

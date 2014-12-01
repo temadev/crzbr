@@ -1,11 +1,12 @@
 extends ../layouts/main
 block active-item
-  - nav.menu['Карты']['active'] = 1
+  - nav['Карты']['active'] = 1
 block content
-  a(href='/card/create').btn.btn-labeled.btn-primary.pull-right
-    span.btn-label
-      i.fa.fa-plus-circle
-    | Новая карта
+  if user.role !== 'user'
+    a(href='/card/create').btn.btn-labeled.btn-primary.pull-right
+      span.btn-label
+        i.fa.fa-plus-circle
+      | Новая карта
   h3 Карты
     br
     small Список всех карт
@@ -28,7 +29,8 @@ block content
                 th E-mail
                 th Магазин
                 th Покупки
-                th.action
+                if user.role !== 'user'
+                  th.action
             tbody
               each card in cards
                 tr(id='#{card._id}')
@@ -49,13 +51,14 @@ block content
                         | #{card.user.email}
                   td: a(href='/store/view/#{card.store._id}') #{card.store.title}
                   td #{card.purchases}
-                  td
-                    if (!card.user)
-                      a.btn.btn-warning.btn-xs(href='/card/edit/#{card._id}')
-                        i.fa.fa-wrench
-                      | &nbsp;
-                    button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{card._id}', data-title='#{card.cc}', data-type='card')
-                      i.fa.fa-times
+                  if user.role !== 'user'
+                    td
+                      if (!card.user)
+                        a.btn.btn-warning.btn-xs(href='/card/edit/#{card._id}')
+                          i.fa.fa-wrench
+                        | &nbsp;
+                      button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{card._id}', data-title='#{card.cc}', data-type='card')
+                        i.fa.fa-times
               tfoot
                 tr
                   th: a#printCards.btn.btn-info.btn-sm(href='#', data-csrf='#{_csrf}'): i.fa.fa-print
@@ -65,9 +68,9 @@ block content
                   th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='E-mail')
                   th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Магазин')
                   th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Покупки')
-                  th
+                  if user.role !== 'user'
+                    th
 
-  // END DATATABLE 2
 block body_child
   #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
     .modal-dialog

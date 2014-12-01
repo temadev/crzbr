@@ -15,19 +15,23 @@ module.exports = function (router) {
 
   router.get('/', function (req, res) {
 
-    Store.find({user: req.user})
-      .exec(function (err, stores) {
-        if (err) {
-          throw err;
-        }
-        if (stores.length > 1) {
-          res.redirect('/store/');
-        } else {
-          Store.findOne({_id: stores[0]._id}).exec(function (err, store) {
-            res.redirect('/store/view/'+store._id);
-          });
-        }
-      });
+    if (req.user.role === 'user') {
+      res.redirect('/card/');
+    } else {
+      Store.find({user: req.user})
+        .exec(function (err, stores) {
+          if (err) {
+            throw err;
+          }
+          if (stores.length !== 1) {
+            res.redirect('/store/');
+          } else {
+            Store.findOne({_id: stores[0]._id}).exec(function (err, store) {
+              res.redirect('/store/view/'+store._id);
+            });
+          }
+        });
+    }
 
   });
 

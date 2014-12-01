@@ -38,6 +38,7 @@ module.exports = function (router) {
 
   router.get('/create', auth.isAuthenticated(), function (req, res) {
 
+    console.log(res.locals)
     res.render('store/create');
 
   });

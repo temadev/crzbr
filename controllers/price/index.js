@@ -13,14 +13,31 @@ module.exports = function (router) {
 
   router.get('/', auth.isAuthenticated(), function (req, res) {
 
-    Price.find({})
-      .populate('store', 'title')
-      .exec(function (err, prices) {
-        if (err) {
-          throw err;
-        }
-        res.render('price/index', { prices: prices });
+    var query = {};
+
+    if (req.user && req.user.role !== 'admin')
+      query = {user: req.user};
+
+    var allPrices = [];
+
+    Store.find(query, function (err, stores) {
+      async.each(stores, function (store, cb) {
+        Price.find({store: store._id})
+          .populate('store', 'title')
+          .exec(function (err, prices) {
+            async.each(prices, function (price, cb) {
+              allPrices.push(price);
+              cb();
+            }, function () {
+              cb()
+            });
+          });
+      }, function () {
+        res.render('price/index', { prices: allPrices });
       });
+    });
+
+
 
   });
 
@@ -40,6 +57,8 @@ module.exports = function (router) {
   router.post('/create', auth.isAuthenticated(), function (req, res) {
 
     var newPrice = new Price(req.body);
+
+    newPrice.author = req.user._id;
 
     newPrice.save(function (err, price) {
       res.redirect('/price/view/' + price._id);

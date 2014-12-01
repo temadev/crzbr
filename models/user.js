@@ -43,7 +43,6 @@ var userModel = function () {
 
     user.password = bcrypt.hashSync(user.password, crypto.getCryptLevel());
 
-//    console.log(user);
     //Continue with the save operation
     next();
   });

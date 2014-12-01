@@ -17,41 +17,76 @@ module.exports = function (router) {
 
     dateStart.setMonth(dateStart.getMonth() - 1);
 
-    var query = {date: {$gte: dateStart}};
+    var filter = {date: {$gte: dateStart}};
 
     if (req.query) {
       if (req.query.dateStart && req.query.dateEnd) {
         dateStart = formatDate(req.query.dateStart);
         dateEnd = formatDate(req.query.dateEnd);
-        query = {date: {$gte: dateStart, $lte: dateEnd}};
+        filter = {date: {$gte: dateStart, $lte: dateEnd}};
       } else {
         if (req.query.dateStart) {
           dateStart = formatDate(req.query.dateStart);
-          query = {date: {$gte: dateStart}};
+          filter = {date: {$gte: dateStart}};
         }
         if (req.query.dateEnd) {
           dateEnd = formatDate(req.query.dateEnd);
-          query = {date: {$lte: dateEnd}};
+          filter = {date: {$lte: dateEnd}};
         }
       }
     }
 
-    Purchase.find(query)
-      .populate('card')
-      .sort({created: -1})
-      .exec(function (err, purchases) {
-        console.log(purchases);
-        var opts = {path: 'card.user', model: 'User', select: 'firstname lastname middlename'};
-        var opts2 = {path: 'card.store', model: 'Store', select: 'title'};
-        if (err) {
-          throw err;
-        }
-        Purchase.populate(purchases, opts, function (err, purchases) {
-          Purchase.populate(purchases, opts2, function (err, purchases) {
-            res.render('purchase/index', {purchases: purchases, dateStart: dateStart, dateEnd: dateEnd});
-          });
+    var allPurchases = [];
+
+    if (req.user.role === 'user') {
+      Card.find({user: req.user._id}).exec(function (err, cards) {
+        async.each(cards, function (card, cb) {
+          filter.card = card;
+          Purchase.find(filter)
+            .populate('card')
+            .populate('store')
+            .sort({created: -1})
+            .exec(function (err, purchases) {
+              var opts = {path: 'card.user', model: 'User', select: 'firstname lastname middlename'};
+              Purchase.populate(purchases, opts, function (err, purchases) {
+                async.each(purchases, function (purchase, cb) {
+                  allPurchases.push(purchase);
+                  cb();
+                }, function () {
+                  cb();
+                });
+              });
+            });
+        }, function () {
+          res.render('purchase/index', {purchases: allPurchases, dateStart: dateStart, dateEnd: dateEnd});
         });
       });
+    } else {
+      Store.find({user: req.user._id}).exec(function (err, stores) {
+
+        async.each(stores, function (store, cb) {
+          filter.store = store._id;
+          Purchase.find(filter)
+            .populate('card')
+            .populate('store')
+            .sort({created: -1})
+            .exec(function (err, purchases) {
+              var opts = {path: 'card.user', model: 'User', select: 'firstname lastname middlename'};
+              Purchase.populate(purchases, opts, function (err, purchases) {
+                async.each(purchases, function (purchase, cb) {
+                  allPurchases.push(purchase);
+                  cb();
+                }, function () {
+                  cb();
+                });
+              });
+            });
+        }, function () {
+          res.render('purchase/index', {purchases: allPurchases, dateStart: dateStart, dateEnd: dateEnd});
+        });
+
+      });
+    }
 
   });
 
@@ -66,7 +101,6 @@ module.exports = function (router) {
     var body = req.body
       , back = req.body.back
       , purchase = {
-        card: body.card_id,
         title: body.purchase,
         date: Date.now(),
         price: body.price,
@@ -74,16 +108,17 @@ module.exports = function (router) {
         total: parseInt(body.price) * parseInt(body.quantity)
       };
 
-    var newPurchase = new Purchase(purchase);
+    Card.findById(body.card_id).exec(function (err, card) {
+      purchase.card = card._id;
+      purchase.store = card.store;
 
-    newPurchase.save(function (err, purchase) {
-      if (err) {
-        throw err;
-      }
-      if (back)
-        res.redirect(back);
-      else
-        res.redirect('/purchase');
+      var newPurchase = new Purchase(purchase);
+      newPurchase.save(function (err, purchase) {
+        if (back)
+          res.redirect(back);
+        else
+          res.redirect('/purchase');
+      });
     });
 
   });
@@ -146,7 +181,6 @@ module.exports = function (router) {
       };
 
     Purchase.findByIdAndUpdate(id, {$set: purchase}, function (err, purchase) {
-      console.log(arguments);
       res.redirect('/purchase/view/' + id);
     });
 

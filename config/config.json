@@ -89,6 +89,15 @@
       }
     },
 
+    "navigation": {
+      "enabled": true,
+      "priority": 113,
+      "module": {
+        "name":"path:./lib/nav",
+        "method": "injectNav"
+      }
+    },
+
     "session": {
       "enabled": true,
       "priority": 100,

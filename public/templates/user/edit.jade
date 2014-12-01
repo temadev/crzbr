@@ -1,8 +1,9 @@
 extends ../layouts/main
 block active-item
-  - nav.menu['Клиенты']['active'] = 1
+  - nav['Клиенты']['active'] = 1
 block content
   h3 #{client.lastname} #{client.firstname} #{client.middlename}
+
   .row
     .col-md-12
       form.form-horizontal(role='form', method='post', action='/user/edit', enctype='multipart/form-data')
@@ -33,7 +34,16 @@ block content
               .form-group
                 label.col-sm-2.control-label Email
                 .col-sm-6
-                  input.form-control(type='text', name='email', required='required', value='#{client.email}', readonly='')
+                  if user.role === 'user'
+                    input.form-control(type='text', name='email', required='required', value='#{client.email}', readonly='')
+                  else
+                    input.form-control(type='text', name='email', required='required', value='#{client.email}')
+            if user.role === 'admin' || client.owner == user._id+''
+              fieldset
+                .form-group
+                  label.col-sm-2.control-label Изменить пароль
+                  .col-sm-6
+                    input.form-control(type='text', name='password')
             if user.role === 'admin'
               fieldset
                 .form-group
@@ -59,3 +69,5 @@ block content
             a.btn.btn-lg.btn-default(href="/user") Отменить
             input(type="hidden", name="id", value="#{client._id}")
             input(type="hidden", name="_csrf", value="#{_csrf}")
+  if user.role === 'admin'
+    pre= client

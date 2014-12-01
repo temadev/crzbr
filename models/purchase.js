@@ -11,6 +11,10 @@ var purchase = function () {
       ref: 'Card',
       required: true
     },
+    store: {
+      type: Schema.Types.ObjectId,
+      ref: 'Store'
+    },
     title: String,
     date: { type: Date },
     price: Number,
