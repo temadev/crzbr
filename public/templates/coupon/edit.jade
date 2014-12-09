@@ -1,0 +1,57 @@
+extends ../layouts/main
+block active-item
+  - nav['Купоны']['active'] = 1
+block content
+  - function addZ(n){return n<10? '0'+n:''+n;}
+  - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear();}
+  h3 Добавить купон
+  .row
+    .col-md-12
+      form.form-horizontal#couponForm(role='form', method='post', action='/coupon/edit')
+        .panel.panel-default
+          .panel-heading Новость
+          .panel-body
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Магазин
+                .col-sm-6
+                  select.form-control(name='store')
+                    each store in stores
+                      if coupon.store + '' === store.title + ''
+                        option(value='#{store._id}', selected)= store.title
+                      else
+                        option(value='#{store._id}')= store.title
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Время действия
+                .col-sm-3
+                  .datetimepicker.input-group
+                    input.form-control(type='text', name='date_start', data-date-format='DD.MM.YYYY', required='required', value='#{coupon.date_start?showTime(coupon.date_start):""}')
+                    span.input-group-addon
+                      span.fa.fa-calendar
+                .col-sm-3
+                  .datetimepicker.input-group
+                    input.form-control(type='text', name='date_end', data-date-format='DD.MM.YYYY', required='required', value='#{coupon.date_end?showTime(coupon.date_end):""}')
+                    span.input-group-addon
+                      span.fa.fa-calendar
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Стоимость
+                .col-sm-3
+                  input.form-control(type='number', name='price', required='required', value='#{coupon.price?coupon.price:0}')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Заголовок
+                .col-sm-6
+                  input.form-control(type='text', name='title', required='required', value='#{coupon.title?coupon.title:""}')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Подробная информация
+                .col-sm-6
+                  textarea.form-control(name='description', rows='10') #{coupon.description?coupon.description:""}
+          .panel-footer
+            button.btn.btn-lg.btn-info(type='submit') Сохранить
+            | &nbsp;
+            a.btn.btn-lg.btn-default(href="/coupon") Отменить
+            input(type="hidden", name="id", value="#{coupon._id}")
+            input(type="hidden", name="_csrf", value="#{_csrf}")

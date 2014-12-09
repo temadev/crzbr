@@ -1,0 +1,49 @@
+extends ../layouts/main
+block active-item
+  - nav['Новости']['active'] = 1
+block content
+  - function addZ(n){return n<10? '0'+n:''+n;}
+  - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear();}
+  h3 Добавить новость
+  .row
+    .col-md-12
+      form.form-horizontal#newsForm(role='form', method='post', action='/news/edit')
+        .panel.panel-default
+          .panel-heading Новость
+          .panel-body
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Магазин
+                .col-sm-6
+                  select.form-control(name='store')
+                    each store in stores
+                      if news.store+'' === store.title+''
+                        option(value='#{store._id}', selected)= store.title
+                      else
+                        option(value='#{store._id}')= store.title
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Дата
+                .col-sm-3
+                  .datetimepicker.input-group
+                    input.form-control(type='text', name='date', data-date-format='DD.MM.YYYY', required='required', value='#{news.date?showTime(news.date):""}')
+                    span.input-group-addon
+                      span.fa.fa-calendar
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Заголовок
+                .col-sm-6
+                  input.form-control(type='text', name='title', required='required', value='#{news.title?news.title:""}')
+
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Подробная информация
+                .col-sm-6
+                  textarea.form-control(name='description', rows='10') #{news.description?news.description:""}
+
+          .panel-footer
+            button.btn.btn-lg.btn-info(type='submit') Сохранить
+            | &nbsp;
+            a.btn.btn-lg.btn-default(href="/news") Отменить
+            input(type="hidden", name="id", value="#{news._id}")
+            input(type="hidden", name="_csrf", value="#{_csrf}")

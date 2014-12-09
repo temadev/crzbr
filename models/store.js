@@ -15,7 +15,8 @@ var storeModel = function () {
       ref: 'User',
       required: true
     },
-    created: Date
+    created: Date,
+    updated: Date
   });
 
   storeSchema.pre('save', function (next) {

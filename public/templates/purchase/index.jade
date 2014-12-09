@@ -34,7 +34,8 @@ block content
               tr
                 th Дата
                 th Описание покупки
-                th Клиент
+                if user.role !== 'user'
+                  th Клиент
                 th Цена
                 th Кол-во
                 th Сумма
@@ -46,11 +47,12 @@ block content
                 tr(id='#{purchase._id}')
                   td(data-order="#{purchase.date.getTime()}") #{showTime(purchase.date)}
                   td: a(href='/purchase/view/#{purchase._id}') #{purchase.title}
-                  td
-                    if(purchase.card.user)
-                      a(href='/user/view/#{purchase.card.user._id}') #{purchase.card.user.lastname} #{purchase.card.user.firstname} #{purchase.card.user.middlename}
-                    else
-                      a(href='/card/view/#{purchase.card._id}')  #{purchase.card.cc}
+                  if user.role !== 'user'
+                    td
+                      if(purchase.card.user)
+                        a(href='/user/view/#{purchase.card.user._id}') #{purchase.card.user.lastname} #{purchase.card.user.firstname} #{purchase.card.user.middlename}
+                      else
+                        a(href='/card/view/#{purchase.card._id}')  #{purchase.card.cc}
                   td #{purchase.price}
                   td #{purchase.quantity}
                   td #{purchase.total}
@@ -64,7 +66,8 @@ block content
                 tr
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Дата')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Описание покупки')
-                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Клиент')
+                  if user.role !== 'user'
+                    th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Клиент')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Кол-во')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Сумма')

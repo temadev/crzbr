@@ -15,8 +15,9 @@ module.exports = function (router) {
 
     var query = {};
 
-    if (req.user && req.user.role !== 'admin')
+    if (req.user && req.user.role !== 'admin') {
       query = {user: req.user};
+    }
 
     var allPrices = [];
 
@@ -29,7 +30,7 @@ module.exports = function (router) {
               allPrices.push(price);
               cb();
             }, function () {
-              cb()
+              cb();
             });
           });
       }, function () {
@@ -45,8 +46,9 @@ module.exports = function (router) {
 
     var query = {};
 
-    if (req.user && req.user.role !== 'admin')
+    if (req.user && req.user.role !== 'admin') {
       query = {user: req.user};
+    }
 
     Store.find(query, function (err, stores) {
       res.render('price/create', {stores: stores});
@@ -83,8 +85,9 @@ module.exports = function (router) {
     var id = req.params.id
       , query = {};
 
-    if (req.user && req.user.role !== 'admin')
+    if (req.user && req.user.role !== 'admin') {
       query = {user: req.user};
+    }
 
     Price.findById(id)
       .exec(function (err, price) {

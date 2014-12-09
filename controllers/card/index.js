@@ -22,8 +22,9 @@ module.exports = function (router) {
 
     var query = {};
 
-    if (req.user && req.user.role !== 'admin')
+    if (req.user && req.user.role !== 'admin') {
       query = {user: req.user};
+    }
 
     var allCards = [];
 
@@ -83,8 +84,9 @@ module.exports = function (router) {
 
     var query = {};
 
-    if (req.user && req.user.role !== 'admin')
+    if (req.user && req.user.role !== 'admin') {
       query = {user: req.user};
+    }
 
     Store.find(query, function (err, stores) {
       res.render('card/create', {stores: stores});
@@ -97,8 +99,9 @@ module.exports = function (router) {
     var count = req.body.count
       , user = req.body.user_id;
 
-    if (!count)
+    if (!count) {
       count = 1;
+    }
 
     for (var i = 0; i < count; i++) {
       var newCard = new Card({
@@ -122,8 +125,9 @@ module.exports = function (router) {
     var user = req.params.user
       , query = {};
 
-    if (req.user && req.user.role !== 'admin')
+    if (req.user && req.user.role !== 'admin') {
       query = {user: req.user};
+    }
 
     Store.find(query, function (err, stores) {
       res.render('card/user', {stores: stores, user_id: user});
@@ -182,8 +186,6 @@ module.exports = function (router) {
   });
 
   router.post('/printSelected', auth.isAuthenticated(), function (req, res) {
-
-    console.log(req.body.print);
 
     drawCard(req.body.print, function (string) {
       res.contentType = 'application/pdf';

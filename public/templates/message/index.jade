@@ -1,39 +1,38 @@
 extends ../layouts/main
 block active-item
-  - nav['Купоны']['active'] = 1
+  - nav['Сообщения']['active'] = 1
 block content
   - function addZ(n){return n<10? '0'+n:''+n;}
   - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+addZ(date.getHours())+':'+addZ(date.getMinutes())}
   - function showTimeYear(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()}
   if user.role !== 'user'
-    a(href='/coupon/create').btn.btn-labeled.btn-primary.pull-right
+    a(href='/message/create').btn.btn-labeled.btn-primary.pull-right
       span.btn-label
         i.fa.fa-plus-circle
-      | Добавить купон
-  h3 Купоны
+      | Написать сообщение
+  h3 Сообщения
 
   .row
     .col-lg-12
       .panel.panel-default
-        .panel-heading Доступные купоны
+        .panel-heading Все сообщения
         .list-group
-          each coupon in coupons
+          each message in messages
             .list-group-item
               .media
                 .pull-left
-                  if coupon.store.image && coupon.store.image !== ''
-                    img.img-responsive.img-circle(src='#{coupon.store.image}', alt='#{coupon.store.title}', style='width: 48px; height: 48px;')
+                  if message.store.image && message.store.image !== ''
+                    img.img-responsive.img-circle(src='#{message.store.image}', alt='#{message.store.title}', style='width: 48px; height: 48px;')
                   if user.role !== 'user'
-                    a.btn.btn-warning.btn-xs(href='/coupon/edit/#{coupon._id}')
+                    a.btn.btn-warning.btn-xs(href='/message/edit/#{message._id}')
                       i.fa.fa-wrench
                     | &nbsp;
-                    button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{coupon._id}', data-title='#{coupon.title}', data-type='coupon')
+                    button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{message._id}', data-title='#{message.title}', data-type='message')
                       i.fa.fa-times
                 .media-body.clearfix
-                  .media-heading.text-green #{coupon.title}
-                  strong #{coupon.price}
-                  p #{coupon.description}
-                  small #{showTimeYear(coupon.date_start)} — #{showTimeYear(coupon.date_end)}
+                  .media-heading.text-green: a(href='/user/view/#{message.recipient._id}') #{message.recipient.lastname} #{message.recipient.firstname} #{message.recipient.middlename}
+                  p #{message.message}
+                  small #{showTime(message.date)}
 
 block body_child
   #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')

@@ -18,7 +18,8 @@ var cardModel = function () {
       ref: 'User'
     },
     author: { type: Schema.Types.ObjectId, ref: 'User' },
-    created: Date
+    created: Date,
+    updated: Date
   });
 
   cardSchema.pre('save', function (next) {

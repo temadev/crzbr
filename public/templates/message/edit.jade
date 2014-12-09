@@ -1,0 +1,23 @@
+extends ../layouts/main
+block active-item
+  - nav['Сообщения']['active'] = 1
+block content
+  h3 Редактировать сообщение
+  .row
+    .col-md-12
+      form.form-horizontal#messageForm(role='form', method='post', action='/message/edit')
+        .panel.panel-default
+          .panel-heading Сообщение
+          .panel-body
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Текст сообщения
+                .col-sm-6
+                  textarea.form-control(name='message', rows='4') #{message.message}
+
+          .panel-footer
+            button.btn.btn-lg.btn-info(type='submit') Изменить
+            | &nbsp;
+            a.btn.btn-lg.btn-default(href="/message") Отменить
+            input(type="hidden", name="id", value="#{message._id}")
+            input(type="hidden", name="_csrf", value="#{_csrf}")

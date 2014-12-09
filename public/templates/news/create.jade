@@ -1,0 +1,43 @@
+extends ../layouts/main
+block active-item
+  - nav['Новости']['active'] = 1
+block content
+  h3 Добавить новость
+  .row
+    .col-md-12
+      form.form-horizontal#newsForm(role='form', method='post', action='/news/create')
+        .panel.panel-default
+          .panel-heading Новость
+          .panel-body
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Магазин
+                .col-sm-6
+                  select.form-control(name='store')
+                    each store in stores
+                      option(value='#{store._id}')= store.title
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Дата
+                .col-sm-3
+                  .datetimepicker.input-group
+                    input.form-control(type='text', name='date', data-date-format='DD.MM.YYYY', required='required')
+                    span.input-group-addon
+                      span.fa.fa-calendar
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Заголовок
+                .col-sm-6
+                  input.form-control(type='text', name='title', required='required')
+
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Подробная информация
+                .col-sm-6
+                  textarea.form-control(name='description', rows='10')
+
+          .panel-footer
+            button.btn.btn-lg.btn-info(type='submit') Сохранить
+            | &nbsp;
+            a.btn.btn-lg.btn-default(href="/news") Отменить
+            input(type="hidden", name="_csrf", value="#{_csrf}")

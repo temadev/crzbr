@@ -22,8 +22,9 @@ module.exports = function (router) {
 
     var query = {};
 
-    if (req.user && req.user.role !== 'admin')
+    if (req.user && req.user.role !== 'admin') {
       query = {owner: req.user};
+    }
 
     User.find(query)
       .populate('owner')
@@ -186,6 +187,7 @@ module.exports = function (router) {
   router.post('/edit', function (req, res) {
 
     var id = req.body.id
+      , profile = req.body.profile
       , client = {
         email: req.body.email,
         firstname: req.body.firstname,
@@ -200,24 +202,33 @@ module.exports = function (router) {
       User.findById(id).exec(function (err, user) {
         user.password = req.body.password;
         user.save();
-      })
+      });
     }
 
-    if (req.body.role)
+    if (req.body.role) {
       client.role = req.body.role;
+    }
 
     if (req.files && req.files.photo && req.files.photo.size > 0) {
       User.findById(id, function (err, user) {
         uploadS3(req.files.photo, user, function (url) {
           client.photo = url;
           User.findByIdAndUpdate(id, {$set: client}, function (err, user) {
-            res.redirect('/user/view/' + id);
+            if (profile) {
+              res.redirect('/profile');
+            } else {
+              res.redirect('/user/view/' + id);
+            }
           });
         });
       });
     } else {
       User.findByIdAndUpdate(id, {$set: client}, function (err, user) {
-        res.redirect('/user/view/' + id);
+        if (profile) {
+          res.redirect('/profile');
+        } else {
+          res.redirect('/user/view/' + id);
+        }
       });
     }
 

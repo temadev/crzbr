@@ -2,4 +2,46 @@ extends ../layouts/main
 block active-item
   - nav['Новости']['active'] = 1
 block content
+  - function addZ(n){return n<10? '0'+n:''+n;}
+  - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+addZ(date.getHours())+':'+addZ(date.getMinutes())}
+  - function showTimeYear(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()}
+  if user.role !== 'user'
+    a(href='/news/create').btn.btn-labeled.btn-primary.pull-right
+      span.btn-label
+        i.fa.fa-plus-circle
+      | Добавить новость
   h3 Новости
+
+  .row
+    .col-lg-12
+      .panel.panel-default
+        .panel-heading Новости магазинов
+        .list-group
+          each item in news
+            .list-group-item
+              .media
+                .pull-left
+                  if item.store.image && item.store.image !== ''
+                    img.img-responsive.img-circle(src='#{item.store.image}', alt='#{item.store.title}', style='width: 48px; height: 48px;')
+                  if user.role !== 'user'
+                    a.btn.btn-warning.btn-xs(href='/news/edit/#{item._id}')
+                      i.fa.fa-wrench
+                    | &nbsp;
+                    button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{item._id}', data-title='#{item.title}', data-type='news')
+                      i.fa.fa-times
+                .media-body.clearfix
+                  .media-heading.text-green #{item.title}
+                  p #{item.description}
+                  small #{showTimeYear(item.date)}
+
+block body_child
+  #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+          h4#modalRemoveLabel.modal-title Удалить
+        .modal-body#modalRemoveTitle
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
+          button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить

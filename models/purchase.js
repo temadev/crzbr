@@ -21,7 +21,8 @@ var purchase = function () {
     quantity: Number,
     total: Number,
     status: Boolean,
-    created: Date
+    created: Date,
+    updated: Date
   });
 
   purchaseSchema.pre('save', function (next) {

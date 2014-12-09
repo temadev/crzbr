@@ -1,0 +1,51 @@
+extends ../layouts/main
+block active-item
+  - nav['Купоны']['active'] = 1
+block content
+  h3 Добавить купон
+  .row
+    .col-md-12
+      form.form-horizontal#couponForm(role='form', method='post', action='/coupon/create')
+        .panel.panel-default
+          .panel-heading Купон
+          .panel-body
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Магазин
+                .col-sm-6
+                  select.form-control(name='store')
+                    each store in stores
+                      option(value='#{store._id}')= store.title
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Время действия
+                .col-sm-3
+                  .datetimepicker.input-group
+                    input.form-control(type='text', name='date_start', data-date-format='DD.MM.YYYY', required='required')
+                    span.input-group-addon
+                      span.fa.fa-calendar
+                .col-sm-3
+                  .datetimepicker.input-group
+                    input.form-control(type='text', name='date_end', data-date-format='DD.MM.YYYY', required='required')
+                    span.input-group-addon
+                      span.fa.fa-calendar
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Стоимость
+                .col-sm-3
+                  input.form-control(type='number', name='price', required='required')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Заголовок
+                .col-sm-6
+                  input.form-control(type='text', name='title', required='required')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Подробная информация
+                .col-sm-6
+                  textarea.form-control(name='description', rows='10')
+          .panel-footer
+            button.btn.btn-lg.btn-info(type='submit') Сохранить
+            | &nbsp;
+            a.btn.btn-lg.btn-default(href="/coupon") Отменить
+            input(type="hidden", name="_csrf", value="#{_csrf}")

@@ -12,7 +12,7 @@ block content
     .col-lg-8
       .panel.panel-default
         .panel-heading
-          | Реквизиты
+          | Информация по карте
         .panel-body
           if qr
             img.pull-right(src='#{qr}', title='#{card.cc}', style='width:100px')
@@ -28,26 +28,28 @@ block content
               dt Email
               dd #{card.user.email}
         .panel-footer
-          a.btn.btn-link(href='/card/edit/#{card._id}')
-            i.fa.fa-wrench
-            | &nbsp;Изменить
-          | &nbsp;
+          if user.role !== 'user'
+            a.btn.btn-link(href='/card/edit/#{card._id}')
+              i.fa.fa-wrench
+              | &nbsp;Изменить
+            | &nbsp;
+            button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalCardRemove', data-id='#{card._id}', data-title='#{card.cc}', data-type='card')
+              i.fa.fa-times
+              | &nbsp;Удалить карту
+            | &nbsp;
           a.btn.btn-link(href='/card/view/#{card._id}/print', target='_blank')
             i.fa.fa-print
             | &nbsp;Напечатать
-          | &nbsp;
-          button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalCardRemove', data-id='#{card._id}', data-title='#{card.cc}', data-type='card')
-            i.fa.fa-times
-            | &nbsp;Удалить карту
 
   .row
     .col-lg-12
       .panel.panel-default
         .panel-heading
           | Список покупок
-          a.btn.btn-success.pull-right.btn-xs.btn-labeled(href='/purchase/create/card/#{card._id}')
-            .btn-label: i.fa.fa-plus-circle
-            | Добавить покупку
+          if user.role !== 'user'
+            a.btn.btn-success.pull-right.btn-xs.btn-labeled(href='/purchase/create/card/#{card._id}')
+              .btn-label: i.fa.fa-plus-circle
+              | Добавить покупку
         .panel-body#purchases
 
           table#datatable3.table.table-striped.table-hover
@@ -59,7 +61,8 @@ block content
                 th Цена
                 th Кол-во
                 th Сумма
-                th.action
+                if user.role !== 'user'
+                  th.action
             tbody
               each purchase, index in purchases
                 tr(id='#{purchase._id}')
@@ -70,12 +73,13 @@ block content
                   td #{purchase.price}
                   td #{purchase.quantity}
                   td #{purchase.total}
-                  td
-                    a.btn.btn-warning.btn-xs(href='/purchase/edit/#{purchase._id}')
-                      i.fa.fa-wrench
-                    | &nbsp;
-                    button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemovePurchase', data-id='#{purchase._id}', data-title='#{purchase.title}', data-type='purchase', data-back='/card/view/#{card._id}')
-                      i.fa.fa-times
+                  if user.role !== 'user'
+                    td
+                      a.btn.btn-warning.btn-xs(href='/purchase/edit/#{purchase._id}')
+                        i.fa.fa-wrench
+                      | &nbsp;
+                      button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemovePurchase', data-id='#{purchase._id}', data-title='#{purchase.title}', data-type='purchase', data-back='/card/view/#{card._id}')
+                        i.fa.fa-times
               tfoot
                 tr
                   th
@@ -84,7 +88,8 @@ block content
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Кол-во')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Сумма')
-                  th
+                  if user.role !== 'user'
+                    th
 
 block body_child
   #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')

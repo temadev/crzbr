@@ -22,8 +22,9 @@ module.exports = function (router) {
 
     var query = {};
 
-    if (req.user && req.user.role !== 'admin')
+    if (req.user && req.user.role !== 'admin') {
       query = {user: req.user};
+    }
 
     Store.find(query)
       .populate('user')
@@ -38,7 +39,6 @@ module.exports = function (router) {
 
   router.get('/create', auth.isAuthenticated(), function (req, res) {
 
-    console.log(res.locals)
     res.render('store/create');
 
   });
@@ -99,15 +99,18 @@ module.exports = function (router) {
     var id = req.params.id
       , query = { _id: id };
 
-    if (req.user && req.user.role !== 'admin')
+    if (req.user && req.user.role !== 'admin') {
       query = { _id: id, user: req.user._id };
+    }
 
     Store.findOne(query)
       .exec(function (err, store) {
-        if (store)
+        if (store) {
           res.render('store/edit', { store: store });
-        else
+        }
+        else {
           res.redirect('/store');
+        }
       });
 
   });

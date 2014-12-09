@@ -11,8 +11,9 @@ module.exports = function (router) {
 
     var regex = new RegExp(req.query.query, 'i');
     var query = {title: regex};
-    if (req.user && req.user.role !== 'admin')
+    if (req.user && req.user.role !== 'admin') {
       query = {title: regex, author: req.user._id};
+    }
     var suggestions = [];
 
     Price

@@ -1,6 +1,7 @@
 extends ../layouts/main
 block active-item
-  - nav['Магазины']['active'] = 1
+  if user.role !== 'user'
+    - nav['Магазины']['active'] = 1
 block content
   - function addZ(n){return n<10? '0'+n:''+n;}
   - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()}
@@ -10,7 +11,7 @@ block content
     .col-lg-8
       .panel.panel-default
         .panel-heading
-          | Реквизиты
+          | Информация о магазине
         .panel-body
           if store.image
             img.pull-right.img-circle(src='#{store.image}', title='#{store.title}', style='width:100px')
@@ -21,117 +22,119 @@ block content
             if store.description
               dt Информация
               dd #{store.description}
-        .panel-footer
-          a.btn.btn-link(href='/store/edit/#{store._id}')
-            i.fa.fa-wrench
-            | &nbsp;Изменить
-          | &nbsp;
-          button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalRemove', data-id='#{store._id}', data-title='#{store.title}', data-type='store')
-            i.fa.fa-times
-            | &nbsp;Удалить магазин
+        if user.role !== 'user'
+          .panel-footer
+            a.btn.btn-link(href='/store/edit/#{store._id}')
+              i.fa.fa-wrench
+              | &nbsp;Изменить
+            | &nbsp;
+            button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalRemove', data-id='#{store._id}', data-title='#{store.title}', data-type='store')
+              i.fa.fa-times
+              | &nbsp;Удалить магазин
 
-  .row
-    .col-lg-12
-      .panel.panel-default
-        .panel-heading
-          | Список карт
-          a.btn.btn-success.pull-right.btn-xs.btn-labeled(href='/card/create')
-            .btn-label: i.fa.fa-plus-circle
-            | Добавить карту
-        .panel-body
-          table#datatable-cards.table.table-striped.table-hover
-            thead
-              tr
-                th.check-all(style="width: 5%")
-                  .checkbox.c-checkbox
-                    label
-                      input(type='checkbox')
-                      span.fa.fa-check
-                th Номер карты
-                th Владелец
-                th Телефон
-                th E-mail
-                th.action
-            tbody
-              each card in cards
-                tr(id='#{card._id}')
-                  td
-                    .checkbox.c-checkbox: label
-                      input.print-card(type='checkbox', value='#{card._id}')
-                      span.fa.fa-check
-                  td: a(href='/card/view/#{card._id}') #{card.cc}
-                  td
-                    if (card.user)
-                        a(href='/user/view/#{card.user._id}') #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
-                  td
-                    if (card.user)
-                        | #{card.user.phone}
-                  td
-                    if (card.user)
-                        | #{card.user.email}
-                  td
-                    if (!card.user)
-                      a.btn.btn-warning.btn-xs(href='/card/edit/#{card._id}')
+  if user.role !== 'user'
+    .row
+      .col-lg-12
+        .panel.panel-default
+          .panel-heading
+            | Список карт
+            a.btn.btn-success.pull-right.btn-xs.btn-labeled(href='/card/create')
+              .btn-label: i.fa.fa-plus-circle
+              | Добавить карту
+          .panel-body
+            table#datatable-cards.table.table-striped.table-hover
+              thead
+                tr
+                  th.check-all(style="width: 5%")
+                    .checkbox.c-checkbox
+                      label
+                        input(type='checkbox')
+                        span.fa.fa-check
+                  th Номер карты
+                  th Владелец
+                  th Телефон
+                  th E-mail
+                  th.action
+              tbody
+                each card in cards
+                  tr(id='#{card._id}')
+                    td
+                      .checkbox.c-checkbox: label
+                        input.print-card(type='checkbox', value='#{card._id}')
+                        span.fa.fa-check
+                    td: a(href='/card/view/#{card._id}') #{card.cc}
+                    td
+                      if (card.user)
+                          a(href='/user/view/#{card.user._id}') #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
+                    td
+                      if (card.user)
+                          | #{card.user.phone}
+                    td
+                      if (card.user)
+                          | #{card.user.email}
+                    td
+                      if (!card.user)
+                        a.btn.btn-warning.btn-xs(href='/card/edit/#{card._id}')
+                          i.fa.fa-wrench
+                        | &nbsp;
+                      button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{card._id}', data-title='#{card.cc}', data-type='card', data-back='/store/view/#{store._id}')
+                        i.fa.fa-times
+                tfoot
+                  tr
+                    th: a#printCards.btn.btn-warning.btn-sm(href='#', data-csrf='#{_csrf}'): i.fa.fa-print
+                    th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Номер карты')
+                    th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Владелец')
+                    th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Телефон')
+                    th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='E-mail')
+                    th
+
+    .row
+      .col-lg-12
+        .panel.panel-default
+          .panel-heading
+            | Список покупок
+            a.btn.btn-success.pull-right.btn-xs.btn-labeled(href='/purchase/create')
+              .btn-label: i.fa.fa-plus-circle
+              | Добавить покупку
+          .panel-body
+            table#datatable2.table.table-striped.table-hover
+              thead
+                tr
+                  th Описание покупки
+                  th Клиент
+                  th Дата
+                  th Цена
+                  th Кол-во
+                  th Сумма
+                  th.action
+              tbody
+                each purchase in purchases
+                  tr(id='#{purchase._id}')
+                    td: a(href='/purchase/view/#{purchase._id}') #{purchase.title}
+                    td
+                      if (purchase.card.user)
+                          a(href='/user/view/#{purchase.card.user._id}') #{purchase.card.user.lastname} #{purchase.card.user.firstname} #{purchase.card.user.middlename}
+                      else
+                        a(href='/card/view/#{purchase.card._id}') #{purchase.card.cc}
+                    td #{showTime(purchase.date)}
+                    td #{purchase.price}
+                    td #{purchase.quantity}
+                    td #{purchase.total}
+                    td
+                      a.btn.btn-warning.btn-xs(href='/purchase/edit/#{purchase._id}')
                         i.fa.fa-wrench
                       | &nbsp;
-                    button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{card._id}', data-title='#{card.cc}', data-type='card', data-back='/store/view/#{store._id}')
-                      i.fa.fa-times
-              tfoot
-                tr
-                  th: a#printCards.btn.btn-warning.btn-sm(href='#', data-csrf='#{_csrf}'): i.fa.fa-print
-                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Номер карты')
-                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Владелец')
-                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Телефон')
-                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='E-mail')
-                  th
-
-  .row
-    .col-lg-12
-      .panel.panel-default
-        .panel-heading
-          | Список покупок
-          a.btn.btn-success.pull-right.btn-xs.btn-labeled(href='/purchase/create')
-            .btn-label: i.fa.fa-plus-circle
-            | Добавить покупку
-        .panel-body
-          table#datatable2.table.table-striped.table-hover
-            thead
-              tr
-                th Описание покупки
-                th Клиент
-                th Дата
-                th Цена
-                th Кол-во
-                th Сумма
-                th.action
-            tbody
-              each purchase in purchases
-                tr(id='#{purchase._id}')
-                  td: a(href='/purchase/view/#{purchase._id}') #{purchase.title}
-                  td
-                    if (purchase.card.user)
-                        a(href='/user/view/#{purchase.card.user._id}') #{purchase.card.user.lastname} #{purchase.card.user.firstname} #{purchase.card.user.middlename}
-                    else
-                      a(href='/card/view/#{purchase.card._id}') #{purchase.card.cc}
-                  td #{showTime(purchase.date)}
-                  td #{purchase.price}
-                  td #{purchase.quantity}
-                  td #{purchase.total}
-                  td
-                    a.btn.btn-warning.btn-xs(href='/purchase/edit/#{purchase._id}')
-                      i.fa.fa-wrench
-                    | &nbsp;
-                    button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{purchase._id}', data-title='#{purchase.title}', data-type='purchase', data-back='/store/view/#{store._id}')
-                      i.fa.fa-times
-              tfoot
-                tr
-                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Описание покупки')
-                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Клиент')
-                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Дата')
-                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
-                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Кол-во')
-                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Сумма')
-                  th
+                      button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{purchase._id}', data-title='#{purchase.title}', data-type='purchase', data-back='/store/view/#{store._id}')
+                        i.fa.fa-times
+                tfoot
+                  tr
+                    th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Описание покупки')
+                    th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Клиент')
+                    th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Дата')
+                    th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
+                    th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Кол-во')
+                    th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Сумма')
+                    th
 
 block body_child
   #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')

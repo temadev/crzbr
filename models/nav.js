@@ -39,7 +39,7 @@ module.exports = function (user, count) {
         active: 0
       },
       'Сообщения': {
-        href: '/mail',
+        href: '/message',
         icon: 'fa fa-comments',
         active: 0
       }
@@ -70,6 +70,21 @@ module.exports = function (user, count) {
       'Прайслисты': {
         href: '/price',
         icon: 'fa fa-rouble',
+        active: 0
+      },
+      'Купоны': {
+        href: '/coupon',
+        icon: 'fa fa-tags',
+        active: 0
+      },
+      'Новости': {
+        href: '/news',
+        icon: 'fa fa-newspaper-o',
+        active: 0
+      },
+      'Сообщения': {
+        href: '/message',
+        icon: 'fa fa-comments',
         active: 0
       }
     };

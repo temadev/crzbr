@@ -65,8 +65,11 @@ block content
                     .thumbnail: img.img-responsive(src="#{client.photo}")
           .panel-footer
             button.btn.btn-lg.btn-info(type='submit') Сохранить
-            | &nbsp;
-            a.btn.btn-lg.btn-default(href="/user") Отменить
+            if user.role !== 'user'
+              | &nbsp;
+              a.btn.btn-lg.btn-default(href="/user") Отменить
+            if profile
+              input(type="hidden", name="profile", value="true")
             input(type="hidden", name="id", value="#{client._id}")
             input(type="hidden", name="_csrf", value="#{_csrf}")
   if user.role === 'admin'

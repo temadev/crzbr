@@ -114,10 +114,13 @@ module.exports = function (router) {
 
       var newPurchase = new Purchase(purchase);
       newPurchase.save(function (err, purchase) {
-        if (back)
+        if (back) {
           res.redirect(back);
-        else
+        }
+        else {
+
           res.redirect('/purchase');
+        }
       });
     });
 

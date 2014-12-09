@@ -27,15 +27,17 @@ block content
             dd: a(href='/store/view/#{card.store._id}') #{card.store.title}
             dt Карта
             dd: a(href='/card/view/#{card._id}') #{card.cc}
-            dt Клиент
-            dd: a(href='/user/view/#{card.user._id}') #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
+            if user.role !== 'user'
+              dt Клиент
+              dd: a(href='/user/view/#{card.user._id}') #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
 
-        .panel-footer
-          a.btn.btn-link(href='/purchase/edit/#{purchase._id}'): i.fa.fa-wrench
-            | &nbsp;Изменить
-          | &nbsp;
-          button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalRemove', data-id='#{purchase._id}', data-title='#{purchase.title}', data-type='purchase'): i.fa.fa-times
-            | &nbsp;Удалить
+        if user.role !== 'user'
+          .panel-footer
+            a.btn.btn-link(href='/purchase/edit/#{purchase._id}'): i.fa.fa-wrench
+              | &nbsp;Изменить
+            | &nbsp;
+            button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalRemove', data-id='#{purchase._id}', data-title='#{purchase.title}', data-type='purchase'): i.fa.fa-times
+              | &nbsp;Удалить
 
 block body_child
   #modalRemove.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')

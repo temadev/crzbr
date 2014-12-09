@@ -24,9 +24,10 @@ block content
                       input(type='checkbox')
                       span.fa.fa-check
                 th Номер карты
-                th Владелец
-                th Телефон
-                th E-mail
+                if user.role !== 'user'
+                  th Владелец
+                  th Телефон
+                  th E-mail
                 th Магазин
                 th Покупки
                 if user.role !== 'user'
@@ -40,15 +41,16 @@ block content
                       span.fa.fa-check
                   td(data-order="#{card.created.getTime()}")
                     a(href='/card/view/#{card._id}') #{card.cc}
-                  td
-                    if (card.user)
-                        a(href='/user/view/#{card.user._id}') #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
-                  td
-                    if (card.user)
-                        | #{card.user.phone}
-                  td
-                    if (card.user)
-                        | #{card.user.email}
+                  if user.role !== 'user'
+                    td
+                      if (card.user)
+                          a(href='/user/view/#{card.user._id}') #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
+                    td
+                      if (card.user)
+                          | #{card.user.phone}
+                    td
+                      if (card.user)
+                          | #{card.user.email}
                   td: a(href='/store/view/#{card.store._id}') #{card.store.title}
                   td #{card.purchases}
                   if user.role !== 'user'
@@ -63,9 +65,10 @@ block content
                 tr
                   th: a#printCards.btn.btn-info.btn-sm(href='#', data-csrf='#{_csrf}'): i.fa.fa-print
                   th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Номер карты')
-                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Владелец')
-                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Телефон')
-                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='E-mail')
+                  if user.role !== 'user'
+                    th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Владелец')
+                    th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Телефон')
+                    th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='E-mail')
                   th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Магазин')
                   th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Покупки')
                   if user.role !== 'user'

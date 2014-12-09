@@ -1,29 +1,29 @@
 'use strict';
 
-
-var ProfileModel = require('../../models/profile');
-
+var auth = require('../../lib/auth')
+  , async = require('async')
+  , User = require('../../models/user');
 
 module.exports = function (router) {
-
-  var model = new ProfileModel();
-
 
   router.get('/', function (req, res) {
 
     res.format({
       json: function () {
-        res.json(model);
+        res.json({});
       },
       html: function () {
-        res.render('profile/index', model);
+        res.render('profile/index', {});
       }
     });
   });
 
 
   router.get('/settings', function (req, res) {
-    res.render('profile/settings', model);
+    User.findOne({_id: req.user._id})
+      .exec(function (err, user) {
+        res.render('user/edit', {client: user, profile: true});
+      });
   });
 
 };
