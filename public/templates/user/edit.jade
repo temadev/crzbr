@@ -1,6 +1,7 @@
 extends ../layouts/main
 block active-item
-  - nav['Клиенты']['active'] = 1
+  if user.role !== 'user'
+    - nav['Клиенты']['active'] = 1
 block content
   h3 #{client.lastname} #{client.firstname} #{client.middlename}
 
