@@ -13,9 +13,9 @@ var auth = require('../../lib/auth')
 var easyimg = require('easyimage');
 
 var client = s3.createClient({
-  key: 'AKIAIIPJP7GV7ZQLR7GA',
-  secret: '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',
-  bucket: 'roskonkurs'
+  key: process.env.S3_KEY,
+  secret: process.env.S3_SECRET,
+  bucket: process.env.S3_BUCKET
 });
 
 module.exports = function (router) {
