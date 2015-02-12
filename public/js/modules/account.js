@@ -76,6 +76,9 @@
     });
 
     if (printArray.length > 0) {
+
+      $('#printLoading').modal('show');
+
       $('<form action="/card/printSelected" method="POST">' +
       inputs +
       '<input type="hidden" name="_csrf" value="' + csrf + '">' +

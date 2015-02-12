@@ -85,3 +85,12 @@ block body_child
         .modal-footer
           button.btn.btn-default(type='button', data-dismiss='modal') Отменить удаление
           button.btn.btn-danger#modalRemoveBtn(type='submit', data-csrf='#{_csrf}') Удалить
+
+  #printLoading.modal.fade(tabindex='-1', role='dialog', aria-labelledby='modalLabel', aria-hidden='true')
+    .modal-dialog
+      .modal-content
+        .modal-body
+          h3
+            i.fa.fa-spin.fa-circle-o-notch
+            | &nbsp;Подождите пока создадутся карты...
+          p Пожалуйста, не создавайте больше 10 штук за один раз
