@@ -10,6 +10,8 @@ var auth = require('../../lib/auth')
   , Price = require('../../models/price')
   , s3 = require('s3');
 
+var easyimg = require('easyimage');
+
 var client = s3.createClient({
   key: 'AKIAIIPJP7GV7ZQLR7GA',
   secret: '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',
@@ -32,7 +34,7 @@ module.exports = function (router) {
         if (err) {
           throw err;
         }
-        res.render('store/index', { stores: stores });
+        res.render('store/index', {stores: stores});
       });
 
   });
@@ -72,10 +74,10 @@ module.exports = function (router) {
 
       var allPurchases = [];
       async.each(results.cards, function (cardData, callback) {
-        Purchase.find({ card: cardData })
+        Purchase.find({card: cardData})
           .populate('card', 'user')
           .exec(function (err, purchases) {
-            var opts = { path: 'card.user', model: 'User', select: 'firstname lastname middlename' };
+            var opts = {path: 'card.user', model: 'User', select: 'firstname lastname middlename'};
             async.each(purchases, function (purchaseData, callback) {
 
               Purchase.populate(purchaseData, opts, function (err, purchaseData) {
@@ -83,12 +85,11 @@ module.exports = function (router) {
                 callback();
               });
             }, function () {
-              console.log(allPurchases);
               callback();
             });
           });
       }, function () {
-        res.render('store/view', { store: results.store, cards: results.cards, purchases: allPurchases });
+        res.render('store/view', {store: results.store, cards: results.cards, purchases: allPurchases});
       });
     });
 
@@ -97,16 +98,16 @@ module.exports = function (router) {
   router.get('/edit/:id', function (req, res) {
 
     var id = req.params.id
-      , query = { _id: id };
+      , query = {_id: id};
 
     if (req.user && req.user.role !== 'admin') {
-      query = { _id: id, user: req.user._id };
+      query = {_id: id, user: req.user._id};
     }
 
     Store.findOne(query)
       .exec(function (err, store) {
         if (store) {
-          res.render('store/edit', { store: store });
+          res.render('store/edit', {store: store});
         }
         else {
           res.redirect('/store');
@@ -124,11 +125,27 @@ module.exports = function (router) {
       description: body.description
     };
 
-    Store.findByIdAndUpdate(body.id, { $set: store }, function (err, store) {
-      if (req.files && req.files.image) {
-        uploadS3(req.files.image, store, function (url) {
-          res.redirect('/store/view/' + store._id);
-        });
+    Store.findByIdAndUpdate(body.id, {$set: store}, function (err, store) {
+      console.log(req.files);
+      if (req.files && req.files.image && req.files.image.name !== '' && (req.files.image.type === 'image/jpeg' || req.files.image.type === 'image/png')) {
+        easyimg.rescrop({
+          src: req.files.image.path, dst: req.files.image.path,
+          width: 300, height: 300,
+          cropwidth: 128, cropheight: 128,
+          x: 0, y: 0,
+          gravity: 'center'
+        }).then(
+          function (image) {
+            image.name = req.files.image.name;
+            uploadS3(image, store, function (url) {
+              res.redirect('/store/view/' + store._id);
+            });
+          },
+          function (err) {
+            res.redirect('/store/view/' + store._id);
+          }
+        );
+
       } else {
         res.redirect('/store/view/' + store._id);
       }
@@ -142,10 +159,24 @@ module.exports = function (router) {
     newStore.user = req.user;
 
     newStore.save(function (err, store) {
-      if (req.files && req.files.photo) {
-        uploadS3(req.files.photo, store, function (url) {
-          res.redirect('/store/view/' + store._id);
-        });
+      if (req.files && req.files.image && req.files.image.name !== '' && (req.files.image.type === 'image/jpeg' || req.files.image.type === 'image/png')) {
+        easyimg.rescrop({
+          src: req.files.image.path, dst: req.files.image.path,
+          width: 300, height: 300,
+          cropwidth: 128, cropheight: 128,
+          x: 0, y: 0,
+          gravity: 'center'
+        }).then(
+          function (image) {
+            image.name = req.files.image.name;
+            uploadS3(image, store, function (url) {
+              res.redirect('/store/view/' + store._id);
+            });
+          },
+          function (err) {
+            res.redirect('/store/view/' + store._id);
+          }
+        );
       } else {
         res.redirect('/store/view/' + store._id);
       }
@@ -211,7 +242,7 @@ function uploadS3(file, store, callback) {
       //console.log('progress', amountDone, amountTotal);
     });
     uploader.on('end', function (url) {
-      Store.findByIdAndUpdate(store._id, { $set: {image: url} }, function (err, store) {
+      Store.findByIdAndUpdate(store._id, {$set: {image: url}}, function (err, store) {
         callback(store.image);
       });
     });

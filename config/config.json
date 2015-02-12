@@ -113,9 +113,6 @@
               "secure": false,
               "maxAge": 86400000
             }
-          },
-          {
-            "url": "redis://rediscloud:EwVTaEQOhQEjzuS5@pub-redis-18957.eu-west-1-1.2.ec2.garantiadata.com:18957"
           }
         ]
       }

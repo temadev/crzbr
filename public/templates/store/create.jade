@@ -5,7 +5,7 @@ block content
   h3 Новый магазин
   .row
     .col-md-12
-      form.form-horizontal#storeForm(role='form', method='post', action='/store/create', data-parsley-validate='', novalidate='')
+      form.form-horizontal#storeForm(role='form', method='post', action='/store/create', data-parsley-validate='', novalidate='', enctype='multipart/form-data')
         .panel.panel-default
           .panel-heading Основная информация
           .panel-body
