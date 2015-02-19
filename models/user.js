@@ -13,7 +13,7 @@ var userModel = function () {
     lastname: String,
     middlename: String,
     phone: String,
-    email: { type: String, unique: true },
+    email: { type: String },
     password: String,
     role: String,
     owner: { type: Schema.Types.ObjectId, ref: 'User' },

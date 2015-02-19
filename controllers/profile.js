@@ -1,8 +1,8 @@
 'use strict';
 
-var auth = require('../../lib/auth')
+var auth = require('../lib/auth')
   , async = require('async')
-  , User = require('../../models/user');
+  , User = require('../models/user');
 
 module.exports = function (router) {
 

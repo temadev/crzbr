@@ -1,14 +1,14 @@
 'use strict';
 
 
-var auth = require('../../lib/auth')
+var auth = require('../lib/auth')
   , multipart = require('connect-multiparty')
   , multipartMiddleware = multipart()
   , async = require('async')
-  , Store = require('../../models/store')
-  , Card = require('../../models/card')
-  , User = require('../../models/user')
-  , Purchase = require('../../models/purchase')
+  , Store = require('../models/store')
+  , Card = require('../models/card')
+  , User = require('../models/user')
+  , Purchase = require('../models/purchase')
   , QRCode = require('qrcode')
   , cc = require('coupon-code')
   , PDFDocument = require('pdfkit')

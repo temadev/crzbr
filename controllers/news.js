@@ -1,12 +1,12 @@
 'use strict';
 
-var auth = require('../../lib/auth')
+var auth = require('../lib/auth')
   , async = require('async')
-  , News = require('../../models/news')
-  , Store = require('../../models/store')
-  , Card = require('../../models/card')
-  , User = require('../../models/user')
-  , Purchase = require('../../models/purchase');
+  , News = require('../models/news')
+  , Store = require('../models/store')
+  , Card = require('../models/card')
+  , User = require('../models/user')
+  , Purchase = require('../models/purchase');
 
 module.exports = function (router) {
 
