@@ -1,7 +1,7 @@
 'use strict';
 
 
-var LoginModel = require('../models/login'),
+var LoginModel = require('../models/Login'),
   passport = require('passport');
 
 

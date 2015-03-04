@@ -58,7 +58,7 @@
     // conditions and loops are for comparison, not assignments.
     "boss": true,
     // Whether curly braces around all blocks should be required.
-    "curly": true,
+    "curly": false,
     // Whether `===` and `!==` should be required (instead of `==` and `!=`).
     "eqeqeq": true,
     // Whether `== null` comparisons should be allowed, even if `eqeqeq` is `true`.

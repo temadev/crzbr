@@ -3,8 +3,8 @@
 
 var auth = require('../../lib/auth')
   , async = require('async')
-  , Card = require('../../models/card')
-  , User = require('../../models/user');
+  , Card = require('../../models/Card')
+  , User = require('../../models/User');
 
 module.exports = function (router) {
 

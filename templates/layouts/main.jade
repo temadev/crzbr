@@ -1,0 +1,19 @@
+doctype html
+html(lang='en')
+  head
+    include ../partials/sidebar-config
+    block active-item
+    include ../partials/head
+  body
+    section.wrapper
+      include ../partials/top-navbar
+      aside.aside
+        include ../partials/sidebar
+      section
+        section.main-content
+          block content
+    block body_child
+    include ../partials/scripts
+    - function addZ(n){return n<10? '0'+n:''+n;}
+    - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+addZ(date.getHours())+':'+addZ(date.getMinutes())}
+    - function showDate(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()}

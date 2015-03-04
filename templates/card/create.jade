@@ -1,13 +1,13 @@
 extends ../layouts/main
 block active-item
-  - nav['Сообщения']['active'] = 1
+  - nav['Карты']['active'] = 1
 block content
-  h3 Написать сообщение
+  h3 Выпустить карту
   .row
     .col-md-12
-      form.form-horizontal#messageForm(role='form', method='post', action='/message/create')
+      form.form-horizontal#storeForm(role='form', method='post', action='/card/create')
         .panel.panel-default
-          .panel-heading Сообщение
+          .panel-heading Основная информация
           .panel-body
             fieldset
               .form-group
@@ -27,14 +27,14 @@ block content
                     i.fa.fa-plus-circle
             fieldset
               .form-group
-                label.col-sm-2.control-label Текст сообщения
-                .col-sm-6
-                  textarea.form-control(name='message', rows='4')
+                label.col-sm-2.control-label Количество
+                .col-sm-2
+                  input.form-control(type="number", name="count", value="1", min='1', max='100')
 
           .panel-footer
-            button.btn.btn-lg.btn-info(type='submit') Отправить
+            button.btn.btn-lg.btn-info(type='submit') Сохранить
             | &nbsp;
-            a.btn.btn-lg.btn-default(href="/message") Отменить
+            a.btn.btn-lg.btn-default(href="/card") Отменить
             input(type="hidden", name="_csrf", value="#{_csrf}")
 
 block body_child
@@ -70,9 +70,10 @@ block body_child
               .form-group
                 label.col-sm-2.control-label Email
                 .col-sm-6
-                  input.form-control(type='text', name='email', required='required')
+                  input.form-control(type='text', name='email')
             #clientMessage.alert.alert-danger(role='alert', style='display:none')
           .modal-footer
+            input(type='hidden', name='role', value='user')
             input(type='hidden', name='role', value='user')
             button.btn.btn-default(type='button', data-dismiss='modal') Отмена
             button.btn.btn-primary(type='submit') Добавить

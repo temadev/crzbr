@@ -1,0 +1,100 @@
+extends ../layouts/main
+block active-item
+  if user.role !== 'user'
+    - nav['Клиенты']['active'] = 1
+block content
+  h3 Редактировать клиента
+
+  .row
+    .col-md-12
+      form.form-horizontal(role='form', method='post', action='/user/edit', enctype='multipart/form-data')
+        .panel.panel-default
+          .panel-heading Основная информация
+          .panel-body
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Телефон
+                .col-sm-6
+                  if profile.user.phone
+                    input.form-control(type='text', name='phone', value='#{profile.user.phone}', readonly='')
+                  else
+                    input.form-control(type='text', name='phone')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Email
+                .col-sm-6
+                  if profile.user.email
+                    input.form-control(type='text', name='email', value='#{profile.user.email}', readonly='')
+                  else
+                    input.form-control(type='text', name='email')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Фамилия
+                .col-sm-6
+                  input.form-control(type='text', name='lastname', required='required', value='#{profile.lastname ? profile.lastname : ""}')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Имя
+                .col-sm-6
+                  input.form-control(type='text', name='firstname', required='required', value='#{profile.firstname ? profile.firstname : ""}')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Отчество
+                .col-sm-6
+                  input.form-control(type='text', name='middlename', value='#{profile.middlename ? profile.middlename : ""}')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Пол
+                .col-sm-6
+                  select.form-control(name='gender')
+                    - var genders = [{name: "Мужской", val: "male"},{name: "Женский", val: "female"}]
+                    if !profile.gender
+                      option(value='', selected='')
+                    else
+                      option(value='')
+                    each gender in genders
+                      if profile.gender == gender.val
+                        option(value='#{gender.val}', selected='') #{gender.name}
+                      else
+                        option(value='#{gender.val}') #{gender.name}
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Дата рождения
+                .col-sm-6
+                  .datetimepicker.input-group
+                    input.form-control(type='text', name='birth', data-date-format='DD.MM.YYYY', value='#{profile.birth?showDate(profile.birth):""}')
+                    span.input-group-addon
+                      i.fa.fa-calendar
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Город
+                .col-sm-6
+                  input.form-control(type='text', name='city', value='#{profile.city ? profile.city : ""}')
+
+            if profile.owner+'' === user._id+''
+              fieldset
+                .form-group.has-feedback
+                  label.col-sm-2.control-label Фото
+                  .col-sm-6
+                    input.form-control#clientPhoto(type="file", name="photo")
+                    if (profile.user.photo)
+                      img.img-rounded.img-thumbnail(src="#{profile.user.photo}")
+
+              if user.role === 'admin'
+                fieldset
+                  .form-group
+                    label.col-sm-2.control-label Тип клиента
+                    .col-sm-6
+                      select.form-control(name='role')
+                        each role in [{name: 'user', title: 'Клиент'}, {name: 'corp', title: 'Организация'}, {name: 'admin', title: 'Админ'}]
+                          if (profile.user.role === role.name)
+                            option(value='#{role.name}', selected='') #{role.title}
+                          else
+                            option(value='#{role.name}') #{role.title}
+          .panel-footer
+            input(type="hidden", name="profile_id", value="#{profile._id}")
+            input(type="hidden", name="_csrf", value="#{_csrf}")
+            button.btn.btn-lg.btn-info(type='submit') Сохранить
+            | &nbsp;
+            a.btn.btn-lg.btn-default(href="/user") Отменить
+

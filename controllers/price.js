@@ -3,11 +3,11 @@
 
 var auth = require('../lib/auth')
   , async = require('async')
-  , Price = require('../models/price')
-  , Card = require('../models/card')
-  , User = require('../models/user')
-  , Store = require('../models/store')
-  , Purchase = require('../models/purchase');
+  , Price = require('../models/Price')
+  , Card = require('../models/Card')
+  , User = require('../models/User')
+  , Store = require('../models/Store')
+  , Purchase = require('../models/Purchase');
 
 module.exports = function (router) {
 

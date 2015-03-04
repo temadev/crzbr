@@ -3,7 +3,7 @@
 
 var auth = require('../../lib/auth')
   , async = require('async')
-  , Price = require('../../models/price');
+  , Price = require('../../models/Price');
 
 module.exports = function (router) {
 

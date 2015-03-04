@@ -11,6 +11,16 @@ block content
           .panel-body
             fieldset
               .form-group
+                label.col-sm-2.control-label Телефон
+                .col-sm-6
+                  input.form-control(type='text', name='phone', required='required')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Email
+                .col-sm-6
+                  input.form-control(type='text', name='email')
+            fieldset
+              .form-group
                 label.col-sm-2.control-label Фамилия
                 .col-sm-6
                   input.form-control(type='text', name='lastname', required='required')
@@ -26,14 +36,25 @@ block content
                   input.form-control(type='text', name='middlename')
             fieldset
               .form-group
-                label.col-sm-2.control-label Телефон
+                label.col-sm-2.control-label Пол
                 .col-sm-6
-                  input.form-control(type='text', name='phone')
+                  select.form-control(name='gender')
+                    option(value='', selected='')
+                    option(value='male') Мужской
+                    option(value='female') Женский
             fieldset
               .form-group
-                label.col-sm-2.control-label Email
+                label.col-sm-2.control-label Дата рождения
                 .col-sm-6
-                  input.form-control(type='text', name='email', required='required')
+                  .datetimepicker.input-group
+                    input.form-control(type='text', name='birth', data-date-format='DD.MM.YYYY')
+                    span.input-group-addon
+                      i.fa.fa-calendar
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Город
+                .col-sm-6
+                  input.form-control(type='text', name='city')
             if user.role === 'admin'
               fieldset
                 .form-group

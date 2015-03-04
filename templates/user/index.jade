@@ -25,32 +25,29 @@ block content
                 th Зарегистрирован
                 if user.role === 'admin'
                   th Тип клиента
-                  th Принадлежность
                 th.action
             tbody
-              each client in users
-                tr(id='#{client._id}')
-                  td: a(href='/user/view/#{client._id}') #{client.lastname} #{client.firstname} #{client.middlename}
-                  td #{client.phone}
-                  td #{client.email}
-                  td #{showTime(client.created)}
+              each profile in users
+                tr(id='#{profile._id}')
+                  td: a(href='/user/view/#{profile._id}') #{profile.lastname} #{profile.firstname} #{profile.middlename}
+                  td #{profile.user.phone}
+                  td #{profile.user.email}
+                  td #{showTime(profile.user.created)}
                   if user.role === 'admin'
                     td
-                      if client.role === 'admin'
+                      if profile.user.role === 'admin'
                         span.label.label-success Админ
-                      if client.role === 'corp'
+                      if profile.user.role === 'corp'
                         span.label.label-warning Организация
-                      if client.role === 'user'
+                      if profile.user.role === 'user'
                         span.label.label-info Клиент
-                    td
-                      if client.owner
-                        a(href='/user/view/#{client.owner._id}') #{client.owner.lastname} #{client.owner.firstname} #{client.owner.middlename}
                   td
-                    a.btn.btn-warning.btn-xs(href='/user/edit/#{client._id}')
+                    a.btn.btn-warning.btn-xs(href='/user/edit/#{profile._id}')
                       i.fa.fa-wrench
                     | &nbsp;
-                    button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{client._id}', data-title='#{client.title}', data-type='user')
-                      i.fa.fa-times
+                    if profile.user.role !== 'admin' || profile.user._id+'' !== user._id+''
+                      button.btn.btn-remove.btn-danger.btn-xs(data-toggle='modal', data-target='#modalRemove', data-id='#{profile._id}', data-title='#{profile.lastname} #{profile.firstname} #{profile.middlename}', data-type='user')
+                        i.fa.fa-times
               tfoot
                 tr
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='fio', placeholder='ФИО')
@@ -59,7 +56,6 @@ block content
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='created', placeholder='Регистрация')
                   if user.role === 'admin'
                     th: input.form-control.input-sm.datatable_input_col_search(type='text', name='role', placeholder='Тип клиента')
-                    th: input.form-control.input-sm.datatable_input_col_search(type='text', name='role', placeholder='Принадлежность')
                   th
 
 block body_child

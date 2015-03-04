@@ -1,13 +1,12 @@
 'use strict';
 
-
 var auth = require('../lib/auth')
   , async = require('async')
-  , Store = require('../models/store')
-  , Card = require('../models/card')
-  , User = require('../models/user')
-  , Purchase = require('../models/purchase')
-  , Price = require('../models/price')
+  , Store = require('../models/Store')
+  , Card = require('../models/Card')
+  , User = require('../models/User')
+  , Purchase = require('../models/Purchase')
+  , Price = require('../models/Price')
   , s3 = require('s3');
 
 var easyimg = require('easyimage');

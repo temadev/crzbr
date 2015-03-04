@@ -3,10 +3,10 @@
 
 var auth = require('../lib/auth')
   , async = require('async')
-  , Store = require('../models/store')
-  , Card = require('../models/card')
-  , User = require('../models/user')
-  , Purchase = require('../models/purchase');
+  , Store = require('../models/Store')
+  , Card = require('../models/Card')
+  , User = require('../models/User')
+  , Purchase = require('../models/Purchase');
 
 module.exports = function (router) {
 

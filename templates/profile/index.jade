@@ -1,0 +1,36 @@
+extends ../layouts/main
+block active-item
+  //- nav['Мой профиль']['active'] = 1
+block content
+  h3 Мой профиль
+  .row
+    .col-lg-6
+      .panel.widget
+        .panel-body: .media.p
+          if user.photo
+            .pull-left: img.media-object.img-circle(src='#{user.photo}', style='width: 100px; height: 100px;', alt='#{user.firstname} #{user.middlename} #{user.lastname}')
+          .media-body
+            .media-heading
+              h3.mt0 #{user.firstname} #{user.middlename} #{user.lastname}
+              p: a.btn.btn-xs.btn-success(href='/profile/settings') Редактировать
+              ul.list-unstyled
+                if user.phone
+                  li.mb-sm
+                    i.fa.fa-fw.fa-phone
+                    | #{user.phone}
+                if user.email
+                  li.mb-sm
+                    i.fa.fa-fw.fa-envelope-o
+                    | #{user.email}
+                if user.gender
+                  li.mb-sm
+                    i.fa.fa-fw.fa-user
+                    | #{(user.gender === 'male')?'мужской':'женский'}
+                if user.birth
+                  li.mb-sm
+                    i.fa.fa-fw.fa-gift
+                    | #{showDate(user.birth)}
+                if user.city
+                  li.mb-sm
+                    i.fa.fa-fw.fa-map-marker
+                    | #{user.city}

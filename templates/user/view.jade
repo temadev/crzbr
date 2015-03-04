@@ -2,33 +2,41 @@ extends ../layouts/main
 block active-item
   - nav['Клиенты']['active'] = 1
 block content
-  - function addZ(n){return n<10? '0'+n:''+n;}
-  - function showTime(date){return addZ(date.getDate())+'.'+addZ(date.getMonth()+1)+'.'+date.getFullYear()+' '+date.getHours()+':'+date.getMinutes()}
   h3 #{client.lastname} #{client.firstname} #{client.middlename}
   .row
     .col-lg-8
       .panel.panel-default
         .panel-heading Клиент
         .panel-body#users
-          if client.photo
-            img.pull-right(src='#{client.photo}', style='width:100px')
+          if client.user.photo
+            img.pull-right(src='#{client.user.photo}', style='width:100px')
           dl.dl-horizontal
             dt ФИО
             dd #{client.lastname} #{client.firstname} #{client.middlename}
-            if client.phone
+            if client.user.phone
               dt Телефон
-              dd #{client.phone}
-            if client.email
+              dd #{client.user.phone}
+            if client.user.email
               dt Email
-              dd #{client.email}
-            if client.created
+              dd #{client.user.email}
+            if client.gender || client.user.gender
+              - var gender = client.gender?client.gender:client.user.gender
+              dt Пол
+              dd #{(gender === 'male')?'Мужской':'Женский'}
+            if client.birth || client.user.birth
+              dt Дата рождения
+              dd #{showDate(client.birth?client.birth:client.user.birth)}
+            if client.city || client.user.city
+              dt Город
+              dd #{client.city?client.city:client.user.city}
+            if client.user.created
               dt Дата регистрации
-              dd #{showTime(client.created)}
+              dd #{showTime(client.user.created)}
         .panel-footer
           a.btn.btn-link(href='/user/edit/#{client._id}'): i.fa.fa-wrench
             | &nbsp;Изменить
           | &nbsp;
-          button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalRemove', data-id='#{client._id}', data-title='#{client.title}', data-type='user'): i.fa.fa-times
+          button.btn.btn-link.btn-remove(data-toggle='modal', data-target='#modalRemove', data-id='#{client._id}', data-title='#{client.lastname} #{client.firstname} #{client.middlename}', data-type='user'): i.fa.fa-times
             | &nbsp;Удалить
 
   if stores > 0

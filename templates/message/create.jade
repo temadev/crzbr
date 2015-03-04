@@ -1,0 +1,35 @@
+extends ../layouts/main
+block active-item
+  - nav['Сообщения']['active'] = 1
+block content
+  h3 Написать сообщение
+  .row
+    .col-md-12
+      form.form-horizontal#messageForm(role='form', method='post', action='/message/create')
+        .panel.panel-default
+          .panel-heading Сообщение
+          .panel-body
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Магазин
+                .col-sm-6
+                  select.form-control(name='store')
+                    each store in stores
+                      option(value='#{store._id}')= store.title
+            fieldset
+              .form-group
+                label.col-sm-2.control-label(for="user") Клиент
+                .col-sm-8
+                  input.form-control#autocomplete-users(type="text", name="user", placeholder='Поиск по номеру телефона')
+                  input#selction-users(type="hidden", name="user_id")
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Текст сообщения
+                .col-sm-6
+                  textarea.form-control(name='message', rows='4')
+
+          .panel-footer
+            button.btn.btn-lg.btn-info(type='submit') Отправить
+            | &nbsp;
+            a.btn.btn-lg.btn-default(href="/message") Отменить
+            input(type="hidden", name="_csrf", value="#{_csrf}")

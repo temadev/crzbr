@@ -1,37 +1,32 @@
 'use strict';
 
-
 var auth = require('../lib/auth')
   , async = require('async')
-  , Store = require('../models/store')
-  , Card = require('../models/card')
-  , User = require('../models/user')
-  , Purchase = require('../models/purchase')
-  , QRCode = require('qrcode')
+  , Store = require('../models/Store')
+  , Card = require('../models/Card')
+  , User = require('../models/User')
+  , Purchase = require('../models/Purchase')
+  , Profile = require('../models/Profile')
   , s3 = require('s3');
 
+var easyimg = require('easyimage');
+
 var client = s3.createClient({
-  key: 'AKIAIIPJP7GV7ZQLR7GA',
-  secret: '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',
-  bucket: 'roskonkurs'
+  key: process.env.S3_KEY,
+  secret: process.env.S3_SECRET,
+  bucket: process.env.S3_BUCKET
 });
 
 module.exports = function (router) {
 
   router.get('/', auth.isAuthenticated(), function (req, res) {
 
-    var query = {};
+    var query = (req.user && req.user.role !== 'admin') ? {owner: req.user} : {};
 
-    if (req.user && req.user.role !== 'admin') {
-      query = {owner: req.user};
-    }
-
-    User.find(query)
-      .populate('owner')
+    Profile.find(query)
+      .populate('user')
       .exec(function (err, users) {
-        if (err) {
-          throw err;
-        }
+        if (err) console.log(err);
         res.render('user/index', {users: users});
       });
 
@@ -46,39 +41,33 @@ module.exports = function (router) {
   router.post('/create', auth.isAuthenticated(), function (req, res) {
 
     var client = req.body;
-    if (!client.role) {
-      client.role = 'user';
-    }
-    client.owner = req.user;
+    if (!client.role) client.role = 'user';
 
-    User.findOne({email: client.email}, function (err, user) {
-      if (err) {
-        throw err;
-      }
-      if (!user) {
-        var newUser = new User(client);
-        newUser.created = Date.now();
-        newUser.save(function (err, user) {
-          if (err) {
-            throw err;
-          }
-          if (req.files && req.files.photo) {
-            uploadS3(req.files.photo, user, function (url) {
-              user.photo = url;
-              user.save(function (err, user) {
-                res.redirect('/user/view/' + user._id);
-              });
+    User.findOne({phone: client.phone}, function (err, user) {
+      if (err) console.log(err);
+      if (user) {
+        Profile.findOne({user: user._id, owner: req.user._id}).exec(function (err, profile) {
+          if (err) console.log(err);
+          if (profile) {
+            Profile.findByIdAndUpdate(profile._id, {$set: client}, function () {
+              res.redirect('/user/view/' + profile._id);
             });
           } else {
-            res.redirect('/user/view/' + user._id);
+            createProfile(client, user._id, req.user._id, function (profile) {
+              res.redirect('/user/view/' + profile._id);
+            });
           }
-
         });
-
-        return;
-      }
-      if (user) {
-        res.redirect('/user/view/' + user._id);
+      } else {
+        var newUser = new User(client);
+        newUser.save(function (err, user) {
+          if (err) console.log(err);
+          createProfile(client, user._id, req.user._id, function (profile) {
+            imageCropUpload(req.files, user, function () {
+              res.redirect('/user/view/' + profile._id);
+            });
+          });
+        });
       }
     });
 
@@ -87,28 +76,31 @@ module.exports = function (router) {
   router.post('/create_lazy', auth.isAuthenticated(), function (req, res) {
 
     var client = req.body;
-    client.role = 'user';
-    client.owner = req.user;
+    if (!client.role) client.role = 'user';
 
-    User.findOne({email: client.email}, function (err, user) {
-      if (err) {
-        throw err;
-      }
-      if (!user) {
-        var newUser = new User(client);
-        newUser.created = Date.now();
-        newUser.save(function (err, user) {
-          if (err) {
-            throw err;
-          }
-          res.send({id: user._id, title: user.lastname + ' ' + user.firstname, phone: user.phone});
-
-        });
-
-        return;
-      }
+    User.findOne({phone: client.phone}, function (err, user) {
+      if (err) console.log(err);
       if (user) {
-        res.send({id: user._id, title: user.lastname + ' ' + user.firstname, phone: user.phone});
+        Profile.findOne({user: user._id, owner: req.user._id}).exec(function (err, profile) {
+          if (err) console.log(err);
+          if (profile) {
+            Profile.findByIdAndUpdate(profile._id, {$set: client}, function () {
+              res.send({id: user._id, title: profile.lastname + ' ' + profile.firstname, phone: user.phone});
+            });
+          } else {
+            createProfile(client, user._id, req.user._id, function (profile) {
+              res.send({id: user._id, title: profile.lastname + ' ' + profile.firstname, phone: user.phone});
+            });
+          }
+        });
+      } else {
+        var newUser = new User(client);
+        newUser.save(function (err, user) {
+          if (err) console.log(err);
+          createProfile(client, user._id, req.user._id, function (profile) {
+            res.send({id: user._id, title: profile.lastname + ' ' + profile.firstname, phone: user.phone});
+          });
+        });
       }
     });
 
@@ -118,56 +110,62 @@ module.exports = function (router) {
 
     var id = req.params.id;
 
-    async.parallel({
-      user: function (callback) {
-        User.findById(id, function (err, user) {
-          if (err) {
-            throw err;
-          }
-          callback(null, user);
-        });
-      },
-      cards: function (callback) {
-        Card.find({user: id})
-          .populate('store', 'title')
-          .exec(function (err, card) {
-            if (err) {
-              throw err;
-            }
-            callback(null, card);
-          });
-      },
-      stores: function (callback) {
-        Store.count({user: req.user._id})
-          .exec(function (err, count) {
-            callback(null, count);
-          });
-      }
-    }, function (err, results) {
-      if (err) {
-        console.log(err);
-      }
+    Profile.findById(id).populate('user').exec(function (err, profile) {
 
-      var allPurchases = [];
-      async.each(results.cards, function (cardData, callback) {
+      if (profile) {
 
-        Purchase.find({card: cardData})
-          .populate('card', 'store')
-          .exec(function (err, purchases) {
-            var opts = {path: 'card.store', model: 'Store', select: 'title'};
-            async.each(purchases, function (purchaseData, callback) {
-
-              Purchase.populate(purchaseData, opts, function (err, purchaseData) {
-                allPurchases.push(purchaseData);
-                callback();
+        async.parallel({
+          cards: function (callback) {
+            Card.find({user: profile.user._id})
+              .populate('store', 'title')
+              .exec(function (err, card) {
+                if (err) {
+                  throw err;
+                }
+                callback(null, card);
               });
-            }, function () {
-              callback();
+          },
+          stores: function (callback) {
+            Store.count({user: req.user._id})
+              .exec(function (err, count) {
+                callback(null, count);
+              });
+          }
+        }, function (err, results) {
+          if (err) {
+            console.log(err);
+          }
+
+          var allPurchases = [];
+          async.each(results.cards, function (cardData, callback) {
+
+            Purchase.find({card: cardData})
+              .populate('card', 'store')
+              .exec(function (err, purchases) {
+                var opts = {path: 'card.store', model: 'Store', select: 'title'};
+                async.each(purchases, function (purchaseData, callback) {
+
+                  Purchase.populate(purchaseData, opts, function (err, purchaseData) {
+                    allPurchases.push(purchaseData);
+                    callback();
+                  });
+                }, function () {
+                  callback();
+                });
+              });
+          }, function () {
+            res.render('user/view', {
+              client: profile,
+              cards: results.cards,
+              purchases: allPurchases,
+              stores: results.stores
             });
           });
-      }, function () {
-        res.render('user/view', {client: results.user, cards: results.cards, purchases: allPurchases, stores: results.stores});
-      });
+        });
+      } else {
+        res.redirect('/user');
+      }
+
     });
 
   });
@@ -176,69 +174,45 @@ module.exports = function (router) {
 
     var id = req.params.id;
 
-    User.findOne({_id: id})
-      .exec(function (err, user) {
-        console.log(user);
-        res.render('user/edit', {client: user});
+    Profile.findById(id)
+      .populate('user')
+      .exec(function (err, profile) {
+        res.render('user/edit', {profile: profile});
       });
 
   });
 
   router.post('/edit', function (req, res) {
 
-    var id = req.body.id
-      , profile = req.body.profile
-      , client = {
-        email: req.body.email,
+    var id = req.body.profile_id
+      , profile = {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         middlename: req.body.middlename,
-        phone: req.body.phone
+        gender: req.body.gender,
+        birth: req.body.birth,
+        city: req.body.city,
+        updated: Date.now()
       };
 
-    client.updated = Date.now();
-
-    if (req.body.password && req.body.password !== '') {
-      User.findById(id).exec(function (err, user) {
-        user.password = req.body.password;
-        user.save();
-      });
-    }
-
-    if (req.body.role) {
-      client.role = req.body.role;
-    }
-
-    if (req.files && req.files.photo && req.files.photo.size > 0) {
-      User.findById(id, function (err, user) {
-        uploadS3(req.files.photo, user, function (url) {
-          client.photo = url;
-          User.findByIdAndUpdate(id, {$set: client}, function (err, user) {
-            if (profile) {
-              res.redirect('/profile');
-            } else {
-              res.redirect('/user/view/' + id);
-            }
-          });
-        });
-      });
-    } else {
-      User.findByIdAndUpdate(id, {$set: client}, function (err, user) {
-        if (profile) {
-          res.redirect('/profile');
-        } else {
+    Profile.findByIdAndUpdate(id, {$set: profile}, function (err, profile) {
+      User.findById(profile.user).exec(function (err, user) {
+        if (user.status) {
           res.redirect('/user/view/' + id);
+        } else {
+          imageCropUpload(req.files, user, function () {
+            res.redirect('/user/view/' + id);
+          });
         }
       });
-    }
+    });
 
   });
 
   router.post('/remove', function (req, res) {
 
-    User.findById(req.body.id, function (err, user) {
-
-      Card.find({user: user}).exec(function (err, cards) {
+    Profile.findById(req.body.id, function (err, profile) {
+      Card.find({user: profile.user}).exec(function (err, cards) {
         async.each(cards, function (card, cb) {
           Card.findById(card._id, function (err, c) {
             Purchase.find({card: c}).exec(function (err, purchases) {
@@ -253,21 +227,44 @@ module.exports = function (router) {
             cb();
           });
         }, function () {
-          user.remove();
+          profile.remove();
           res.send(200);
         });
       });
-
-
     });
-
   });
 
 };
 
-function uploadS3(file, user, callback) {
-  if (file.path) {
-    var uploader = client.upload(file.path, 'crzbr/' + user._id + '/' + file.name);
+function imageCropUpload(files, user, cb) {
+  if (files && files.photo && files.photo.name !== '' && (files.photo.type === 'image/jpeg' || files.photo.type === 'image/png')) {
+    console.log(files);
+    easyimg.rescrop({
+      src: files.photo.path, dst: files.photo.path,
+      width: 300, height: 300,
+      cropwidth: 128, cropheight: 128,
+      x: 0, y: 0,
+      gravity: 'center'
+    }).then(
+      function (image) {
+        image.name = files.photo.name;
+        uploadS3(image, user._id, function () {
+          cb();
+        });
+      },
+      function (err) {
+        console.log(err);
+        cb();
+      }
+    );
+  } else {
+    cb();
+  }
+}
+
+function uploadS3(file, user_id, cb) {
+  if (file.size && file.path) {
+    var uploader = client.upload(file.path, 'crzbr/' + user_id + '/' + file.name);
     uploader.on('error', function (err) {
       console.error('unable to upload:', err.stack);
     });
@@ -275,17 +272,41 @@ function uploadS3(file, user, callback) {
       console.log('progress', amountDone, amountTotal);
     });
     uploader.on('end', function (url) {
-      console.log('file available at', url);
-      console.log('upload-user', user);
-      User.findById(user._id, function (err, user) {
-        console.log('upload-find-user', user);
+      User.findById(user_id, function (err, user) {
         user.photo = url;
-        user.save(function (err, user) {
-          console.log('upload-find-user-save', user);
-          callback(user.photo);
-        });
+        user.save();
+        if (cb) {
+          cb(user.photo);
+        }
       });
-
     });
   }
+}
+
+function createProfile(user, user_id, owner_id, cb) {
+  var newProfile = new Profile({
+    user: user_id,
+    owner: owner_id,
+    created: Date.now(),
+    status: true
+  });
+  if (user.firstname) newProfile.firstname = user.firstname;
+  if (user.lastname) newProfile.lastname = user.lastname;
+  if (user.middlename) newProfile.middlename = user.middlename;
+  if (user.gender) newProfile.gender = user.gender;
+  if (user.city) newProfile.city = user.city;
+  if (user.birth) newProfile.birth = formatDate(user.birth);
+  newProfile.save(function (err, profile) {
+    if (cb) cb(profile);
+  });
+}
+
+function formatDate(date) {
+  var d = new Date();
+  if (date !== '') {
+    date = date.replace(/(\d+).(\d+).(\d+)/, '$2/$1/$3');
+    d.setTime(Date.parse(date));
+    date = d;
+  }
+  return date;
 }

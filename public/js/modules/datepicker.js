@@ -14,7 +14,8 @@
 
     $this.datetimepicker($.extend(
       options,
-      { // support for FontAwesome icons
+      {
+        language: 'ru',
         icons: {
           time: "fa fa-clock-o",
           date: "fa fa-calendar",
