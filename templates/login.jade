@@ -6,6 +6,8 @@ block content
         p.text-center.mb-lg
           br
           a(href="/"): strong CrazyBuyer
+        p.text-center.mb-lg
+          strong ВОЙДИТЕ
         .text-center.mb-lg
           if messages && messages.length > 0
             p: strong= messages[0]
@@ -19,3 +21,6 @@ block content
               span.fa.fa-lock.form-control-feedback.text-muted
             button.btn.btn-block.btn-primary(type='submit') Войти <i class="fa fa-sign-in"></i>
             input(type="hidden", name="_csrf", value="#{_csrf}")
+            .text-center.mb-sm
+              br
+              a.text-muted(href="/register") или зарегистрируйтесь

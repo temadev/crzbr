@@ -6,16 +6,18 @@ block content
         p.text-center.mb-lg
           br
           a(href="/"): strong CrazyBuyer
+        p.text-center.mb-lg
+          strong РЕГИСТРАЦИЯ
         .text-center.mb-lg
           if messages && messages.length > 0
             p: strong= messages[0]
         .panel-body
-          form.mb-lg#loginForm(role='form', method="post", action="/login")
+          form.mb-lg#registerForm(role='form', method="post", action="/register")
             .form-group.has-feedback
-              input#email.form-control(type='text', name="username", placeholder='Номер телефона или Email')
+              input#phone.form-control(type='text', name="phone", placeholder='Номер телефона')
+              span.fa.fa-phone.form-control-feedback.text-muted
+            .form-group.has-feedback
+              input#name.form-control(type='text', name="name", placeholder='Имя Фамилия')
               span.fa.fa-user.form-control-feedback.text-muted
-            .form-group.has-feedback
-              input#password.form-control(type='password', name="password", placeholder='Пароль')
-              span.fa.fa-lock.form-control-feedback.text-muted
-            button.btn.btn-block.btn-primary(type='submit') Войти <i class="fa fa-sign-in"></i>
+            button.btn.btn-block.btn-primary(type='submit') Зарегистрироваться <i class="fa fa-sign-in"></i>
             input(type="hidden", name="_csrf", value="#{_csrf}")
