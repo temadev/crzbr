@@ -9,13 +9,16 @@ block content
         .panel.panel-default
           .panel-heading Основная информация
           .panel-body
-            fieldset
-              .form-group
-                label.col-sm-2.control-label Магазин
-                .col-sm-6
-                  select.form-control(name='store')
-                    each store in stores
-                      option(value='#{store._id}') #{store.title}
+            if stores
+              fieldset
+                .form-group
+                  label.col-sm-2.control-label Магазин
+                  .col-sm-6
+                    select.form-control(name='store')
+                      each store in stores
+                        option(value='#{store._id}') #{store.title}
+            if store
+              input(type="hidden", name="store", value="#{store}")
             fieldset
               .form-group
                 label.col-sm-2.control-label Название
@@ -26,6 +29,11 @@ block content
                 label.col-sm-2.control-label Цена
                 .col-sm-6
                   input.form-control(type='number', name='price', required='required')
+            fieldset
+              .form-group
+                label.col-sm-2.control-label Бонус
+                .col-sm-6
+                  input.form-control(type='number', name='bonus')
             fieldset
               .form-group
                 label.col-sm-2.control-label Описание

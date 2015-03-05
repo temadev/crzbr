@@ -15,6 +15,7 @@ var priceModel = function () {
     title: String,
     description: String,
     price: Number,
+    bonus: Number,
     status: Boolean
   });
 

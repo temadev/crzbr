@@ -31,6 +31,11 @@ block content
                   input.form-control(type='number', name='price', required='required', value='#{price.price}')
             fieldset
               .form-group
+                label.col-sm-2.control-label Бонус
+                .col-sm-6
+                  input.form-control(type='number', name='bonus', value='#{price.bonus?price.bonus:""}')
+            fieldset
+              .form-group
                 label.col-sm-2.control-label Описание
                 .col-sm-6
                   textarea.form-control(name='description') #{price.description}

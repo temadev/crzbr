@@ -19,11 +19,27 @@ module.exports = function (router) {
       query = {user: req.user};
     }
 
+    Store.find(query, function (err, stores) {
+      if (stores.length === 1)
+        res.redirect('/price/' + stores[0]._id);
+      else
+        res.render('price/select', { stores: stores });
+    });
+
+  });
+
+  router.get('/:store', auth.isAuthenticated(), function (req, res) {
+
     var allPrices = [];
 
-    Store.find(query, function (err, stores) {
-      async.each(stores, function (store, cb) {
-        Price.find({store: store._id})
+    async.parallel([
+      function (cb) {
+        Store.findById(req.params.store).exec(function (err, store) {
+          cb(null, store);
+        });
+      },
+      function (cb) {
+        Price.find({store: req.params.store})
           .populate('store', 'title')
           .exec(function (err, prices) {
             async.each(prices, function (price, cb) {
@@ -33,12 +49,11 @@ module.exports = function (router) {
               cb();
             });
           });
-      }, function () {
-        res.render('price/index', { prices: allPrices });
-      });
+      }
+    ], function (err, results) {
+      console.log(arguments);
+      res.render('price/index', { prices: allPrices, store: results[0] });
     });
-
-
 
   });
 
@@ -53,6 +68,24 @@ module.exports = function (router) {
     Store.find(query, function (err, stores) {
       res.render('price/create', {stores: stores});
     });
+
+  });
+
+  router.get('/create/:store', auth.isAuthenticated(), function (req, res) {
+
+    if (req.params.store) {
+      res.render('price/create', {store: req.params.store});
+    } else {
+      var query = {};
+
+      if (req.user && req.user.role !== 'admin') {
+        query = {user: req.user};
+      }
+      Store.find(query, function (err, stores) {
+        res.render('price/create', {stores: stores});
+      });
+    }
+
 
   });
 

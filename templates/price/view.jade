@@ -18,6 +18,8 @@ block content
             dd #{price.title}
             dt Цена
             dd #{price.price}
+            dt Бонус
+            dd #{price.bonus?price.bonus:0}
             dt Магазин
             dd: a(href='/price/view/#{price.store._id}') #{price.store.title}
             if price.description

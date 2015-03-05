@@ -2,11 +2,11 @@ extends ../layouts/main
 block active-item
   - nav['Прайслисты']['active'] = 1
 block content
-  a(href='/price/create').btn.btn-labeled.btn-primary.pull-right
+  a(href='/price/create/#{store._id}').btn.btn-labeled.btn-primary.pull-right
     span.btn-label
       i.fa.fa-plus-circle
     | Новый товар/услуга
-  h3 Прайслист
+  h3 #{store.title}
     br
     small Список моих товаров/услуг
 
@@ -19,6 +19,7 @@ block content
               tr
                 th Название
                 th Цена
+                th Бонус
                 th Магазин
                 th.action
             tbody
@@ -26,6 +27,7 @@ block content
                 tr(id='#{price._id}')
                   td: a(href='/price/view/#{price._id}') #{price.title}
                   td #{price.price}
+                  td #{price.bonus?price.bonus:""}
                   td: a(href='/store/view/#{price.store._id}') #{price.store.title}
                   td
                     a.btn.btn-warning.btn-xs(href='/price/edit/#{price._id}'): i.fa.fa-wrench
@@ -35,6 +37,7 @@ block content
                 tr
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Название')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Бонус')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Магазин')
                   th
 
