@@ -95,6 +95,7 @@ block content
                   th Магазин
                   th Дата
                   th Цена
+                  th Оплачено бонусами
                   th Кол-во
                   th Сумма
                   th.action
@@ -105,6 +106,7 @@ block content
                     td: a(href='/store/view/#{purchase.card.store._id}') #{purchase.card.store.title}
                     td(data-order="#{purchase.date}") #{showTime(purchase.date)}
                     td #{purchase.price}
+                    td #{purchase.bonus?purchase.bonus:0}
                     td #{purchase.quantity}
                     td #{purchase.total}
                     td
@@ -117,6 +119,7 @@ block content
                     th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Магазин')
                     th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Дата')
                     th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
+                    th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Бонусы')
                     th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Кол-во')
                     th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Сумма')
                     th

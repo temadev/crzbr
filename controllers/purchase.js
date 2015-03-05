@@ -104,6 +104,7 @@ module.exports = function (router) {
         title: body.purchase,
         date: Date.now(),
         price: body.price,
+        bonus: body.bonus,
         quantity: body.quantity,
         total: parseInt(body.price) * parseInt(body.quantity)
       };
@@ -114,11 +115,24 @@ module.exports = function (router) {
 
       var newPurchase = new Purchase(purchase);
       newPurchase.save(function (err, purchase) {
+        var bonus = Math.round(parseInt(purchase.price)/100);
+        console.log(bonus);
+
+        if (body.bonus) {
+          card.bonus -= body.bonus;
+        }
+
+        if (card.bonus)
+          card.bonus += bonus;
+        else
+          card.bonus = bonus;
+
+        card.save();
+
         if (back) {
           res.redirect(back);
         }
         else {
-
           res.redirect('/purchase');
         }
       });

@@ -30,6 +30,7 @@ block content
                   th E-mail
                 th Магазин
                 th Покупки
+                th Бонусы
                 if user.role !== 'user'
                   th.action
             tbody
@@ -53,6 +54,7 @@ block content
                           | #{card.user.email}
                   td: a(href='/store/view/#{card.store._id}') #{card.store.title}
                   td #{card.purchases}
+                  td #{card.bonus?card.bonus:0}
                   if user.role !== 'user'
                     td
                       if (!card.user)
@@ -71,6 +73,7 @@ block content
                     th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='E-mail')
                   th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Магазин')
                   th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Покупки')
+                  th: input.form-control.input-sm.datatable-cards-search(type='text', name='filter_rendering_engine', placeholder='Бонусы')
                   if user.role !== 'user'
                     th
 

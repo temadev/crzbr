@@ -18,6 +18,7 @@ var purchase = function () {
     title: String,
     date: { type: Date },
     price: Number,
+    bonus: Number,
     quantity: Number,
     total: Number,
     status: Boolean,

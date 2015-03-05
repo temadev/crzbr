@@ -37,6 +37,7 @@ block content
                 if user.role !== 'user'
                   th Клиент
                 th Цена
+                th Оплата бонусами
                 th Кол-во
                 th Сумма
                 th Магазин
@@ -54,6 +55,7 @@ block content
                       else
                         a(href='/card/view/#{purchase.card._id}')  #{purchase.card.cc}
                   td #{purchase.price}
+                  td #{purchase.bonus?purchase.bonus:0}
                   td #{purchase.quantity}
                   td #{purchase.total}
                   td: a(href='/store/view/#{purchase.store._id}') #{purchase.store.title}
@@ -69,6 +71,7 @@ block content
                   if user.role !== 'user'
                     th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Клиент')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Бонусы')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Кол-во')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Сумма')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Магазин')

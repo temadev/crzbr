@@ -30,7 +30,7 @@ module.exports = function (router) {
 
     if (req.user.role === 'user') {
       Card.find({user: req.user._id})
-        .populate('user store', 'firstname lastname middlename email phone title')
+        .populate('user store', 'firstname lastname middlename email phone title bonus')
         .exec(function (err, cards) {
           if (err) {
             throw err;
@@ -55,7 +55,7 @@ module.exports = function (router) {
 
           async.each(stores, function (store, cb) {
             Card.find({store: store})
-              .populate('user store', 'firstname lastname middlename email phone title')
+              .populate('user store', 'firstname lastname middlename email phone title bonus')
               .exec(function (err, cards) {
                 if (err) {
                   throw err;
@@ -140,7 +140,7 @@ module.exports = function (router) {
     async.parallel({
       card: function (callback) {
         Card.findOne({_id: req.params.id})
-          .populate('user store', 'title firstname lastname middlename email phone')
+          .populate('user store', 'title firstname lastname middlename email phone bonus')
           .exec(function (err, card) {
             if (err) {
               throw err;
@@ -279,7 +279,7 @@ function drawCard(id, cb) {
     async.parallel({
       card: function (callback) {
         Card.findOne({_id: card})
-          .populate('user store', 'title firstname lastname middlename email phone image')
+          .populate('user store', 'title firstname lastname middlename email phone image bonus')
           .exec(function (err, card) {
             callback(null, card);
           });

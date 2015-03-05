@@ -20,6 +20,8 @@ block content
             if card.cc
               dt Номер карты
               dd #{card.cc}
+            dt Бонусный счет
+            dd #{card.bonus?card.bonus:0}
             if card.user
               dt ФИО клиента
               dd #{card.user.lastname} #{card.user.firstname} #{card.user.middlename}
@@ -59,6 +61,7 @@ block content
                 th Описание покупки
                 th Дата
                 th Цена
+                th Потрачены бонусы
                 th Кол-во
                 th Сумма
                 if user.role !== 'user'
@@ -71,6 +74,7 @@ block content
                     a(href='/purchase/view/#{purchase._id}') #{purchase.title}
                   td(data-order="#{purchase.date}") #{showTime(purchase.date)}
                   td #{purchase.price}
+                  td #{purchase.bonus?purchase.bonus:0}
                   td #{purchase.quantity}
                   td #{purchase.total}
                   if user.role !== 'user'
@@ -86,6 +90,7 @@ block content
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Описание покупки')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Дата')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Цена')
+                  th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Бонусы')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Кол-во')
                   th: input.form-control.input-sm.datatable_input_col_search(type='text', name='filter_rendering_engine', placeholder='Сумма')
                   if user.role !== 'user'

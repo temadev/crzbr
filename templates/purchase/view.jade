@@ -23,6 +23,8 @@ block content
             dd #{purchase.quantity}
             dt Сумма
             dd #{purchase.total}
+            dt Использовано бонусов
+            dd #{purchase.bonus?purchase.bonus:0}
             dt Магазин
             dd: a(href='/store/view/#{card.store._id}') #{card.store.title}
             dt Карта
