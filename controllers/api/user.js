@@ -3,37 +3,42 @@
 
 var auth = require('../../lib/auth')
   , async = require('async')
-  , User = require('../../models/User');
+  , User = require('../../models/User')
+  , Profile = require('../../models/Profile');
 
 module.exports = function (router) {
 
   router.get('/list', auth.isAuthenticated(), function (req, res) {
 
     var regex = new RegExp(req.query.query, 'i');
-    var query = {phone: regex};
+    var query = {};
     if (req.user && req.user.role !== 'admin') {
-      query = {phone: regex, owner: req.user._id};
+      query = {owner: req.user._id};
     }
     var suggestions = [];
-
-    User
-      .find(query, {'email': 1, 'phone': 1, 'firstname': 1, 'lastname': 1, 'middlename': 1})
+console.log(req.user._id);
+    Profile
+      .find(query)
+      .populate('user')
       .sort({'updated': -1})
       .sort({'created': -1})
-      .limit(20)
-      .exec(function (err, users) {
+      .exec(function (err, profiles) {
+        console.log(profiles);
         if (err) {
           console.log(err);
         }
-        async.each(users, function (user, callback) {
-          if (!user.middlename) {
-            user.middlename = '';
+        async.each(profiles, function (user, callback) {
+          console.log(user);
+          if (user.user && regex.test(user.user.phone)) {
+            if (!user.middlename) {
+              user.middlename = '';
+            }
+            var curUser = {
+              data: user.user._id,
+              value: user.lastname + ' ' + user.firstname + ' ' + user.middlename + ' (' + user.user.phone + ')'
+            };
+            suggestions.push(curUser);
           }
-          var curUser = {
-            data: user._id,
-            value: user.lastname + ' ' + user.firstname + ' ' + user.middlename + ' (' + user.phone + ')'
-          };
-          suggestions.push(curUser);
           callback();
         }, function (err) {
           res.json({

@@ -15,7 +15,14 @@ module.exports = function (router) {
       req.flash('error', 'Проверьте корректность введенных данных');
       res.render('register', {messages: req.flash('error')});
     } else {
-      User.findOne({phone: req.body.phone}).exec(function (err, user) {
+      var phone = req.body.phone;
+      phone = phone.split('+');
+      if (phone.length > 1) {
+        phone = phone[1];
+      } else {
+        phone = phone[0];
+      }
+      User.findOne({phone: phone}).exec(function (err, user) {
         if (user) {
           req.flash('error', 'Вы уже регистрировались, попробуйте войти');
           res.render('register', {messages: req.flash('error')});
@@ -24,16 +31,17 @@ module.exports = function (router) {
           var pass = getRandomInt(1000, 9999)
             , name = req.body.name.split(' ');
           var newUser = new User({
-            phone: req.body.phone,
+            phone: phone,
             firstname: name[0],
             lastname: name[1],
-            password: pass
+            password: pass,
+            role: 'user'
           });
 
           newUser.save(function (err, user) {
             console.log(arguments);
             sms.sms_send({
-              to: '79108228988',
+              to: phone,
               text: 'CRAZYBUYER пароль: ' + pass
             }, function (e) {
               console.log(e.description);
