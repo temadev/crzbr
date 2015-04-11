@@ -70,5 +70,8 @@
     "css": "less",
     "js": false,
     "task": "grunt"
+  },
+  "engines": {
+    "node": "0.10.x"
   }
 }
