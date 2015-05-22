@@ -1,9 +1,9 @@
 'use strict';
 
 
-var IndexModel = require('../models/Index'),
-  AdminModel = require('../models/Admin'),
-  Store = require('../models/Store'),
+var IndexModel = require('../models/index'),
+  AdminModel = require('../models/admin'),
+  Store = require('../models/store'),
   auth = require('../lib/auth');
 
 

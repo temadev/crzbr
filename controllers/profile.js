@@ -2,7 +2,7 @@
 
 var auth = require('../lib/auth')
   , async = require('async')
-  , User = require('../models/User');
+  , User = require('../models/user');
 
 var easyimg = require('easyimage');
 

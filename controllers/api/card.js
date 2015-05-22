@@ -3,9 +3,9 @@
 
 var auth = require('../../lib/auth')
   , async = require('async')
-  , Card = require('../../models/Card')
-  , Profile = require('../../models/Profile')
-  , User = require('../../models/User');
+  , Card = require('../../models/card')
+  , Profile = require('../../models/profile')
+  , User = require('../../models/user');
 
 module.exports = function (router) {
 

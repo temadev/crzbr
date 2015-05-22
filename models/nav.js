@@ -1,6 +1,6 @@
 'use strict';
 
-var Store = require('../models/Store');
+var Store = require('../models/store');
 
 module.exports = function (user, count) {
   var menu = {

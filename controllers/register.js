@@ -1,6 +1,6 @@
 'use strict';
 
-var User = require('../models/User');
+var User = require('../models/user');
 var SMSru = require('sms_ru')
   , sms = new SMSru(process.env.SMS_API);
 

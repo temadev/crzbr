@@ -2,11 +2,11 @@
 
 var auth = require('../lib/auth')
   , async = require('async')
-  , Coupon = require('../models/Coupon')
-  , Store = require('../models/Store')
-  , Card = require('../models/Card')
-  , User = require('../models/User')
-  , Purchase = require('../models/Purchase');
+  , Coupon = require('../models/coupon')
+  , Store = require('../models/store')
+  , Card = require('../models/card')
+  , User = require('../models/user')
+  , Purchase = require('../models/purchase');
 
 module.exports = function (router) {
 

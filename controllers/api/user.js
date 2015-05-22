@@ -3,8 +3,8 @@
 
 var auth = require('../../lib/auth')
   , async = require('async')
-  , User = require('../../models/User')
-  , Profile = require('../../models/Profile');
+  , User = require('../../models/user')
+  , Profile = require('../../models/profile');
 
 module.exports = function (router) {
 
